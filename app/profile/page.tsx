@@ -117,12 +117,8 @@ export default async function ProfilePage() {
                       <span className="font-medium text-gray-900">
                         {email.emailAddress}
                       </span>
-                      <div className="flex gap-2">
-                        {email.id === user.primaryEmailAddressId && (
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
-                            Primary
-                          </Badge>
-                        )}
+                      <div className="flex gap-2 text-sm">
+                     
                         {email.verification?.status === "verified" && (
                           <Badge
                             variant="outline"
@@ -148,10 +144,10 @@ export default async function ProfilePage() {
                 Account Information
               </h3>
               <div className="space-y-3 rounded-lg border bg-gray-50 p-4">
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <span className="text-sm font-medium text-gray-600">User ID</span>
                   <code className="text-xs text-gray-900">{user.id}</code>
-                </div>
+                </div> */}
                 {user.firstName && (
                   <div className="flex justify-between">
                     <span className="text-sm font-medium text-gray-600">
