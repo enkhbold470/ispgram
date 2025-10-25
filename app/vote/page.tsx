@@ -3,10 +3,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { Loader2, Heart, AlertCircle } from 'lucide-react'
+import { Loader2, Heart, AlertCircle, RefreshCw, ArrowUpDown } from 'lucide-react'
 import { EntryCard } from '@/components/entry-card'
 import { useEntries } from '@/hooks/use-entries'
 import { shuffle } from '@/lib/utils'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 
 export default function VotePage() {
   const { user, isLoaded } = useUser()
@@ -18,12 +20,21 @@ export default function VotePage() {
     name: string
   } | null>(null)
   const [voting, setVoting] = useState(false)
+  const [sortByLikes, setSortByLikes] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  // Randomize entries once on mount
-  const randomizedEntries = useMemo(() => {
+  // Sort entries based on the selected mode
+  const sortedEntries = useMemo(() => {
     if (entries.length === 0) return []
-    return shuffle(entries)
-  }, [entries])
+    
+    if (sortByLikes) {
+      // Sort by vote count (descending)
+      return [...entries].sort((a, b) => b.voteCount - a.voteCount)
+    } else {
+      // Randomize entries
+      return shuffle(entries)
+    }
+  }, [entries, sortByLikes])
 
   useEffect(() => {
     if (!isLoaded) return
@@ -64,14 +75,20 @@ export default function VotePage() {
         throw new Error(error.error || 'Failed to vote')
       }
 
-      // Refetch entries to update vote counts
-      await refetch()
+      // Vote counts are updated optimistically by VoteButton component
+      // No need to refetch here
     } catch (err) {
       console.error('Vote error:', err)
       alert(err instanceof Error ? err.message : 'Failed to vote. Please try again.')
     } finally {
       setVoting(false)
     }
+  }
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    await refetch()
+    setIsRefreshing(false)
   }
 
   if (!isLoaded || loading) {
@@ -121,7 +138,7 @@ export default function VotePage() {
     )
   }
 
-  if (randomizedEntries.length === 0) {
+  if (sortedEntries.length === 0) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border bg-white p-8 shadow-lg text-center">
@@ -136,7 +153,7 @@ export default function VotePage() {
   }
 
   // Filter out current user's entry
-  const entriesToVote = randomizedEntries.filter(
+  const entriesToVote = sortedEntries.filter(
     (entry) => entry.studentId !== currentStudent.id
   )
 
@@ -150,9 +167,33 @@ export default function VotePage() {
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-900">
           <Heart className="h-4 w-4" />
           <span>
-            {randomizedEntries.length} {randomizedEntries.length === 1 ? 'entry' : 'entries'} in
+            {sortedEntries.length} {sortedEntries.length === 1 ? 'entry' : 'entries'} in
             the contest
           </span>
+        </div>
+
+        {/* Controls for sorting and refreshing */}
+        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div className="flex items-center gap-3 rounded-lg border bg-white px-4 py-3 shadow-sm">
+            <ArrowUpDown className="h-4 w-4 text-gray-500" />
+            <Label htmlFor="sort-mode" className="text-sm font-medium text-gray-700 cursor-pointer">
+              Sort by Likes
+            </Label>
+            <Switch
+              id="sort-mode"
+              checked={sortByLikes}
+              onCheckedChange={setSortByLikes}
+            />
+          </div>
+
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 rounded-lg border bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
         </div>
       </div>
 

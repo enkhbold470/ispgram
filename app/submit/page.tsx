@@ -5,7 +5,8 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Upload, Loader2, CheckCircle, AlertCircle, Trash2, Heart } from 'lucide-react'
+import { Upload, Loader2, CheckCircle, AlertCircle, Trash2, Heart, Eye } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
 const MAX_FILE_SIZE_MB = 5
@@ -303,26 +304,28 @@ export default function SubmitPage() {
             <p className="mb-4 text-gray-700">{existingEntry.description}</p>
           )}
           <div className="flex gap-4">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setIsEditing(true)}
-              className="flex-1 rounded-full bg-green-700 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-600"
             >
               Edit Title
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleDeletePhoto}
-              className="flex-1 rounded-full bg-red-700 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-600 flex items-center justify-center gap-2"
               disabled={loading}
+              variant="destructive"
             >
               <Trash2 className="h-5 w-5" />
-              Delete Photo
-            </button>
-            <Link
-              href="/vote"
-              className="flex-1 rounded-full border-2 border-purple-600 px-6 py-3 text-center font-semibold text-purple-600 transition-colors hover:bg-purple-50"
+              Delete
+                </Button>
+            <Button
+              onClick={() => router.push('/vote')}  disabled={loading}  
+              variant="outline"
             >
+              <Heart className="h-5 w-5" />
               Vote for Others
-            </Link>
+            </Button>
+      
           </div>
         </div>
       ) : (
