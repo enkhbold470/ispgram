@@ -42,6 +42,39 @@ export default function ResultsPage() {
     .sort((a, b) => b.voteCount - a.voteCount)
     .slice(0, 3)
 
+  // Arrange for olympic order: [3rd, 1st, 2nd]
+  const displayTopThree =
+    topThree.length === 3
+      ? [topThree[2], topThree[0], topThree[1]]
+      : topThree.length === 2
+      ? [null, topThree[0], topThree[1]]
+      : topThree.length === 1
+      ? [null, topThree[0], null]
+      : [null, null, null]
+
+  // Medal icons and border colors for [3rd, 1st, 2nd]
+  const medals = ['🥉', '🥇', '🥈']
+  const borders = ['border-orange-400', 'border-yellow-400', 'border-gray-400']
+  // Extra: Different box/sizing for 1st (middle) place
+  const cardClasses = [
+    // 3rd place: slightly smaller
+    '!h-48 md:!h-60 !py-3 !px-2 md:!py-4 md:!px-2 scale-90',
+    // 1st place: largest, emphasized
+    '!h-56 md:!h-72 !py-4 !px-3 md:!py-8 md:!px-6 scale-105 z-10',
+    // 2nd place: larger than 3rd but smaller than 1st
+    '!h-52 md:!h-64 !py-3.5 !px-2 md:!py-6 md:!px-4 scale-95',
+  ]
+  const iconSizes = [
+    'text-3xl md:text-5xl',
+    'text-5xl md:text-7xl',
+    'text-4xl md:text-6xl',
+  ]
+  const nameSizes = [
+    'text-lg md:text-xl',
+    'text-xl md:text-2xl',
+    'text-lg md:text-xl',
+  ]
+
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-8 text-center">
@@ -57,26 +90,26 @@ export default function ResultsPage() {
       {entries.length > 0 && topThree.length > 0 && (
         <div className="mb-8 rounded-lg border bg-linear-to-r from-yellow-50 to-orange-50 p-6 shadow-lg">
           <h2 className="mb-4 text-center text-xl font-bold text-gray-900">🎉 Top 3 🎉</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {topThree.map((entry, index) => {
-              const rank = index + 1
-              const medals = ['🥇', '🥈', '🥉']
-
+          <div className="grid grid-cols-3 gap-4 items-end">
+            {displayTopThree.map((entry, olympicIdx) => {
+              if (!entry) {
+                // Show blanks for missing (less than 3 participants)
+                return (
+                  <div
+                    key={`empty-${olympicIdx}`}
+                    className={`rounded-lg border-2 bg-gray-50 text-center shadow-sm opacity-40 ${borders[olympicIdx]} ${cardClasses[olympicIdx]}`}
+                  ></div>
+                )
+              }
               return (
                 <div
                   key={entry.id}
-                  className={`rounded-lg border-2 bg-white p-4 text-center shadow-sm ${
-                    rank === 1
-                      ? 'border-yellow-400'
-                      : rank === 2
-                      ? 'border-gray-400'
-                      : 'border-orange-400'
-                  }`}
+                  className={`flex flex-col items-center justify-end rounded-lg border-2 bg-white text-center shadow-sm transition-all duration-200 ${borders[olympicIdx]} ${cardClasses[olympicIdx]}`}
                 >
-                  <div className="mb-2 text-4xl">{medals[index]}</div>
-                  <h3 className="mb-1 font-bold text-gray-900">{entry.student.name}</h3>
-                  <p className="text-2xl font-bold text-gray-900">{entry.voteCount}</p>
-                  <p className="text-sm text-gray-600">
+                  <div className={`mb-2 ${iconSizes[olympicIdx]}`}>{medals[olympicIdx]}</div>
+                  <h3 className={`mb-1 font-bold text-gray-900 ${nameSizes[olympicIdx]}`}>{entry.student.name}</h3>
+                  <p className={`font-bold text-gray-900 ${olympicIdx === 1 ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>{entry.voteCount}</p>
+                  <p className={`text-sm text-gray-600`}>
                     {entry.voteCount === 1 ? 'vote' : 'votes'}
                   </p>
                 </div>
