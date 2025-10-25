@@ -5,10 +5,11 @@ import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const entry = await getEntryById(params.id)
+    const { id } = await params
+    const entry = await getEntryById(id)
 
     if (!entry) {
       return NextResponse.json({ error: 'Entry not found' }, { status: 404 })
@@ -23,7 +24,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth()
@@ -31,12 +32,13 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { description, photoUrl } = body
 
     // Get entry with student info
     const entry = await prisma.entry.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         student: true,
       },
@@ -53,7 +55,7 @@ export async function PATCH(
 
     // Update entry
     const updatedEntry = await prisma.entry.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(description !== undefined && { description }),
         ...(photoUrl !== undefined && { photoUrl }),
@@ -78,7 +80,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth()
@@ -86,9 +88,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     // Get entry with student info
     const entry = await prisma.entry.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         student: true,
       },
@@ -105,7 +108,7 @@ export async function DELETE(
 
     // Delete entry (cascade will handle votes)
     await prisma.entry.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ success: true })
