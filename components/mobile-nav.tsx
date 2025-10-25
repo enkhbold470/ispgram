@@ -1,0 +1,181 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Home, Upload, Heart, Trophy, User } from "lucide-react";
+import { SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
+import { cn } from "@/lib/utils";
+
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  activePattern: RegExp;
+}
+
+const navItems: NavItem[] = [
+  {
+    href: "/",
+    label: "Home",
+    icon: Home,
+    activePattern: /^\/$/,
+  },
+  {
+    href: "/submit",
+    label: "Submit",
+    icon: Upload,
+    activePattern: /^\/submit/,
+  },
+  {
+    href: "/vote",
+    label: "Vote",
+    icon: Heart,
+    activePattern: /^\/vote/,
+  },
+  {
+    href: "/results",
+    label: "Results",
+    icon: Trophy,
+    activePattern: /^\/results/,
+  },
+];
+
+export function MobileNav() {
+  const pathname = usePathname();
+  const { openSignIn } = useClerk();
+
+  const isActive = (pattern: RegExp) => pattern.test(pathname);
+
+  return (
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+      aria-label="Mobile navigation"
+    >
+      {/* Backdrop blur with gradient border */}
+      <div className="relative border-t border-orange-100 bg-white/80 backdrop-blur-xl">
+        {/* Gradient accent line */}
+        <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-orange-500 via-purple-500 to-orange-500" />
+        
+        {/* Safe area padding for notched devices */}
+        <div className="pb-safe">
+          <div className="flex items-center justify-around px-2 py-2">
+            {/* Main navigation items */}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.activePattern);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all duration-300 active:scale-95",
+                    active
+                      ? "text-orange-600"
+                      : "text-gray-600 hover:text-orange-500"
+                  )}
+                  aria-label={item.label}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {/* Active indicator bubble */}
+                  {active && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-100 to-purple-50 opacity-100 transition-opacity" />
+                  )}
+
+                  {/* Icon with scale animation */}
+                  <div className="relative z-10">
+                    <Icon
+                      className={cn(
+                        "h-6 w-6 transition-transform duration-300",
+                        active && "scale-110"
+                      )}
+                      aria-hidden="true"
+                    />
+                  </div>
+
+                  {/* Label with fade animation */}
+                  <span
+                    className={cn(
+                      "relative z-10 text-[10px] font-semibold transition-all duration-300",
+                      active ? "opacity-100" : "opacity-70 group-hover:opacity-100"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+
+                  {/* Active dot indicator (modern minimal style) */}
+                  {active && (
+                    <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-orange-600" />
+                  )}
+                </Link>
+              );
+            })}
+
+            {/* Profile / Sign In */}
+            <SignedIn>
+              <Link
+                href="/profile"
+                className={cn(
+                  "group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all duration-300 active:scale-95",
+                  pathname === "/profile"
+                    ? "text-orange-600"
+                    : "text-gray-600 hover:text-orange-500"
+                )}
+                aria-label="Profile"
+                aria-current={pathname === "/profile" ? "page" : undefined}
+              >
+                {pathname === "/profile" && (
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-100 to-purple-50 opacity-100" />
+                )}
+                
+                <div className="relative z-10">
+                  <User
+                    className={cn(
+                      "h-6 w-6 transition-transform duration-300",
+                      pathname === "/profile" && "scale-110"
+                    )}
+                    aria-hidden="true"
+                  />
+                </div>
+                
+                <span
+                  className={cn(
+                    "relative z-10 text-[10px] font-semibold transition-all duration-300",
+                    pathname === "/profile"
+                      ? "opacity-100"
+                      : "opacity-70 group-hover:opacity-100"
+                  )}
+                >
+                  Profile
+                </span>
+                
+                {pathname === "/profile" && (
+                  <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-orange-600" />
+                )}
+              </Link>
+            </SignedIn>
+
+            <SignedOut>
+              <button
+                onClick={() => openSignIn()}
+                className="group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 text-gray-600 transition-all duration-300 hover:text-orange-500 active:scale-95"
+                aria-label="Sign in"
+              >
+                <div className="relative z-10">
+                  <User
+                    className="h-6 w-6 transition-transform duration-300"
+                    aria-hidden="true"
+                  />
+                </div>
+                
+                <span className="relative z-10 text-[10px] font-semibold opacity-70 transition-all duration-300 group-hover:opacity-100">
+                  Sign In
+                </span>
+              </button>
+            </SignedOut>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
