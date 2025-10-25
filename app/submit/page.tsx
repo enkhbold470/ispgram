@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import Link from 'next/link'
 import { Upload, Loader2, CheckCircle, AlertCircle, Trash2, Heart, Eye } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
 const MAX_FILE_SIZE_MB = 5
@@ -278,63 +281,105 @@ export default function SubmitPage() {
       </div>
 
       {existingEntry && !isEditing ? (
-        <div className="rounded-lg border bg-white p-6 shadow-lg">
-          <div className="relative mb-4 aspect-square w-full overflow-hidden rounded-lg">
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          {/* Header - Instagram style */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
+                  {user?.firstName?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || 'U'}
+                </span>
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-gray-900">
+                  {user?.fullName || user?.firstName || 'Your Entry'}
+                </p>
+                <p className="text-xs text-gray-500">Halloween Costume 🎃</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="text-blue-500 text-sm font-semibold hover:text-blue-600"
+            >
+              Edit
+            </button>
+          </div>
+
+          {/* Image - Instagram style (full width, square) */}
+          <div className="relative aspect-square w-full overflow-hidden bg-black">
             <Image
               src={existingEntry.photoUrl}
               alt="Your costume"
               fill
-              className="object-cover"
+              className="object-contain"
             />
-            {/* Heart/likes display below the image */}
-            <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-white/90 rounded-full px-3 py-1 shadow">
-              <Heart
-                className={`h-6 w-6 ${likeInfo.hasLiked ? 'text-pink-500 fill-pink-500' : 'text-gray-300'}`}
-                fill={likeInfo.hasLiked ? '#ec4899' : 'none'}
-              />
-              <span className={`ml-1 text-base font-semibold ${likeInfo.hasLiked ? 'text-pink-600' : 'text-gray-600'}`}>
-                {likeInfo.count}
-              </span>
-              <span className="ml-1 text-xs text-gray-500">
-                {likeInfo.count === 1 ? 'Like' : 'Likes'}
-              </span>
-            </div>
           </div>
-          {existingEntry.description && (
-            <p className="mb-4 text-gray-700">{existingEntry.description}</p>
-          )}
-          <div className="flex gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit Title
-            </Button>
-            <Button
-              onClick={handleDeletePhoto}
-              disabled={loading}
-              variant="destructive"
-            >
-              <Trash2 className="h-5 w-5" />
-              Delete
-                </Button>
-            <Button
-              onClick={() => router.push('/vote')}  disabled={loading}  
-              variant="outline"
-            >
-              <Heart className="h-5 w-5" />
-              Vote for Others
-            </Button>
-      
+
+          {/* Action buttons - Instagram style */}
+          <div className="px-4 py-3">
+            <div className="flex items-center gap-4">
+              <button className="hover:opacity-70 transition-opacity">
+                <Heart className={`h-7 w-7 ${likeInfo.hasLiked ? 'text-pink-500 fill-pink-500' : 'text-gray-800'}`} />
+              </button>
+              <button 
+                onClick={handleDeletePhoto}
+                disabled={loading}
+                className="hover:opacity-70 transition-opacity ml-auto"
+              >
+                <Trash2 className="h-6 w-6 text-red-500" />
+              </button>
+            </div>
+
+            {/* Likes count */}
+            <div className="mt-2 mb-2">
+              <p className="font-semibold text-sm text-gray-900">
+                {likeInfo.count === 1 ? '1 like' : `${likeInfo.count} likes`}
+              </p>
+            </div>
+
+            {/* Caption/Description - Instagram style */}
+            {existingEntry.description && (
+              <div className="mb-2">
+                <p className="text-sm text-gray-900">
+                  <span className="font-semibold mr-2">
+                    {user?.firstName || user?.fullName || 'You'}
+                  </span>
+                  <span className="text-gray-700">{existingEntry.description}</span>
+                </p>
+              </div>
+            )}
+
+            {/* Action buttons row */}
+            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+              <Button
+                onClick={() => router.push('/vote')}
+                disabled={loading}
+                className="flex-1 bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              >
+                <Heart className="h-4 w-4 mr-2" />
+                Vote for Others
+              </Button>
+              <Button
+                onClick={() => router.push('/results')}
+                disabled={loading}
+                variant="outline"
+                className="flex-1"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Results
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="rounded-lg border bg-white p-6 shadow-lg">
           {error && (
-            <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-4 text-red-700">
+            <Alert variant="destructive">
               <AlertCircle className="h-5 w-5" />
-              <span>{error}</span>
-            </div>
+              <AlertDescription>
+                <span>{error}</span>
+              </AlertDescription>
+            </Alert>
           )}
 
           {!existingEntry && (
@@ -342,13 +387,12 @@ export default function SubmitPage() {
               <label htmlFor="studentId" className="mb-2 block font-semibold text-gray-900">
                 De Anza Student ID <span className="text-red-600">*</span>
               </label>
-              <input
+              <Input
                 id="studentId"
                 type="text"
                 value={studentId}
                 onChange={handleStudentIdChange}
                 placeholder="e.g., 20123456"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
                 maxLength={8}
                 pattern="\d{8}"
@@ -367,7 +411,7 @@ export default function SubmitPage() {
                 Costume Photo <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <input
+                < Input
                   type="file"
                   accept=".jpeg,.jpg,.png,image/jpeg,image/jpg,image/png"
                   onChange={(e) => {
@@ -435,7 +479,7 @@ export default function SubmitPage() {
             <label htmlFor="description" className="mb-2 block font-semibold text-gray-900">
               Description (Optional)
             </label>
-            <textarea
+            <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
