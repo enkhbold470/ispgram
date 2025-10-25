@@ -1,19 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Ghost } from "lucide-react";
+import { fontVariables } from "@/lib/fonts";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "ISPGram - De Anza Halloween Costume Contest",
@@ -29,7 +19,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-linear-to-br from-orange-50 via-purple-50 to-black/5 min-h-screen`}
+          className={`${fontVariables} font-sans antialiased bg-linear-to-br from-orange-50 via-purple-50 to-black/5 min-h-screen`}
         >
           <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg">
             <div className="container mx-auto flex items-center justify-between px-4 py-4">
