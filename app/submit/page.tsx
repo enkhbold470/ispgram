@@ -60,9 +60,11 @@ export default function SubmitPage() {
               const likesRes = await fetch(`/api/entries/${student.entry.id}`)
               if (likesRes.ok) {
                 const data = await likesRes.json()
+                // Check if current user has voted for their own entry
+                const hasVoted = data.votes?.some((vote: { studentId: string }) => vote.studentId === student.id) ?? false
                 setLikeInfo({
                   count: data.voteCount ?? 0,
-                  hasLiked: false,
+                  hasLiked: hasVoted,
                 })
               }
             }
@@ -108,6 +110,47 @@ export default function SubmitPage() {
       setError(err instanceof Error ? err.message : 'An error occurred while deleting')
     }
     setLoading(false)
+  }
+
+  // Handler for voting on own entry
+  const handleSelfVote = async () => {
+    if (!existingEntry || loading) return
+
+    // Optimistic update
+    const newHasLiked = !likeInfo.hasLiked
+    const newCount = newHasLiked ? likeInfo.count + 1 : likeInfo.count - 1
+    
+    setLikeInfo({
+      count: newCount,
+      hasLiked: newHasLiked,
+    })
+
+    try {
+      const response = await fetch('/api/votes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entryId: existingEntry.id }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to vote')
+      }
+
+      const data = await response.json()
+      // Update with actual count from server
+      setLikeInfo({
+        count: data.voteCount,
+        hasLiked: data.action === 'added',
+      })
+    } catch (err) {
+      // Revert on error
+      setLikeInfo({
+        count: likeInfo.count,
+        hasLiked: likeInfo.hasLiked,
+      })
+      console.error('Vote error:', err)
+      setError(err instanceof Error ? err.message : 'Failed to vote')
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -318,13 +361,17 @@ export default function SubmitPage() {
           {/* Action buttons - Instagram style */}
           <div className="px-4 py-3">
             <div className="flex items-center gap-4">
-              <button className="hover:opacity-70 transition-opacity">
+              <button 
+                onClick={handleSelfVote}
+                disabled={loading}
+                className="hover:opacity-70 transition-opacity disabled:opacity-50"
+              >
                 <Heart className={`h-7 w-7 ${likeInfo.hasLiked ? 'text-pink-500 fill-pink-500' : 'text-gray-800'}`} />
               </button>
               <button 
                 onClick={handleDeletePhoto}
                 disabled={loading}
-                className="hover:opacity-70 transition-opacity ml-auto"
+                className="hover:opacity-70 transition-opacity ml-auto disabled:opacity-50"
               >
                 <Trash2 className="h-6 w-6 text-red-500" />
               </button>

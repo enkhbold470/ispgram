@@ -152,10 +152,8 @@ export default function VotePage() {
     )
   }
 
-  // Filter out current user's entry
-  const entriesToVote = sortedEntries.filter(
-    (entry) => entry.studentId !== currentStudent.id
-  )
+  // Allow voting on all entries including own entry
+  const entriesToVote = sortedEntries
 
   return (
     <div className="mx-auto max-w-7xl">
