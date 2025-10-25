@@ -5,7 +5,10 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Upload, Loader2, CheckCircle, AlertCircle, Camera } from 'lucide-react'
+import { Upload, Loader2, CheckCircle, AlertCircle, Trash2, Heart } from 'lucide-react'
+
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
+const MAX_FILE_SIZE_MB = 5
 
 export default function SubmitPage() {
   const { user, isLoaded } = useUser()
@@ -22,8 +25,13 @@ export default function SubmitPage() {
     id: string
     description: string | null
     photoUrl: string
+    likeCount?: number
+    hasLiked?: boolean
   } | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+
+  // State for likes/hearts
+  const [likeInfo, setLikeInfo] = useState<{ count: number; hasLiked: boolean }>({ count: 0, hasLiked: false })
 
   useEffect(() => {
     if (!isLoaded) return
@@ -32,7 +40,7 @@ export default function SubmitPage() {
       return
     }
 
-    // Check if user already has an entry
+    // Check if user already has an entry and fetch like info too
     async function checkExistingEntry() {
       try {
         const response = await fetch('/api/student')
@@ -42,6 +50,18 @@ export default function SubmitPage() {
             setExistingEntry(student.entry)
             setDescription(student.entry.description || '')
             setPreviewUrl(student.entry.photoUrl)
+
+            // Fetch like info for user's entry
+            if (student.entry.id) {
+              const likesRes = await fetch(`/api/entries/${student.entry.id}`)
+              if (likesRes.ok) {
+                const data = await likesRes.json()
+                setLikeInfo({
+                  count: data.voteCount ?? 0,
+                  hasLiked: false,
+                })
+              }
+            }
           }
           if (student.studentId) {
             setStudentId(student.studentId)
@@ -55,13 +75,35 @@ export default function SubmitPage() {
     checkExistingEntry()
   }, [user, isLoaded, router])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (selectedFile) {
-      setFile(selectedFile)
-      const url = URL.createObjectURL(selectedFile)
-      setPreviewUrl(url)
+  // Accept only 8 digit numbers for studentId
+  const handleStudentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Remove non-digit characters and allow only first 8 digits
+    const value = e.target.value.replace(/\D/g, '').slice(0, 8)
+    setStudentId(value)
+  }
+
+  // Handler for deleting the photo (remove entry)
+  const handleDeletePhoto = async () => {
+    if (!existingEntry) return
+    if (!window.confirm("Are you sure you want to delete your entry (photo and title)?")) return
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await fetch(`/api/entries/${existingEntry.id}`, { method: 'DELETE' })
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to delete entry')
+      }
+      setExistingEntry(null)
+      setPreviewUrl(null)
+      setDescription('')
+      setSuccess(false)
+      setIsEditing(false)
+      setFile(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred while deleting')
     }
+    setLoading(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,17 +113,33 @@ export default function SubmitPage() {
 
     try {
       // Validate
-      if (!existingEntry && !studentId.trim()) {
-        throw new Error('Please enter your De Anza Student ID')
+      if (!existingEntry) {
+        if (!studentId.trim()) {
+          throw new Error('Please enter your De Anza Student ID')
+        }
+        if (!/^\d{8}$/.test(studentId.trim())) {
+          throw new Error('Student ID must be exactly 8 digits')
+        }
+        if (!file) {
+          throw new Error('Please select a photo of your costume')
+        }
       }
 
-      if (!file && !existingEntry) {
-        throw new Error('Please select a photo of your costume')
+      // Validate file type and size before upload (only for new entry)
+      if (!existingEntry && file) {
+        if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+          throw new Error(
+            'We only accept JPEG, PNG, or JPG images. If you are using .heic, please change your iOS camera setting. Sad for you 😢'
+          )
+        }
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+          throw new Error('Image must be less than 5MB.')
+        }
       }
 
-      // Upload photo if a new one is selected
+      // Upload photo if a new one is selected (only when creating entry)
       let photoUrl = existingEntry?.photoUrl
-      if (file) {
+      if (!existingEntry && file) {
         const formData = new FormData()
         formData.append('file', file)
 
@@ -96,17 +154,18 @@ export default function SubmitPage() {
 
         const uploadData = await uploadResponse.json()
         photoUrl = uploadData.url
+        if (!photoUrl) throw new Error("No photo URL returned from upload")
       }
 
       // Submit or update entry
       if (existingEntry) {
-        // Update existing entry
+        // Only edit description/title, not photo
         const response = await fetch(`/api/entries/${existingEntry.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             description: description.trim() || null,
-            photoUrl,
+            // Do NOT allow photoUrl change
           }),
         })
 
@@ -115,7 +174,7 @@ export default function SubmitPage() {
           throw new Error(error.error || 'Failed to update entry')
         }
       } else {
-        // Create new entry
+        // Create new entry (with photo)
         const response = await fetch('/api/entries', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -136,12 +195,18 @@ export default function SubmitPage() {
 
       setSuccess(true)
       setIsEditing(false)
+      if (!existingEntry) {
+        setFile(null)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
     }
   }
+
+  // Only allow photo upload on new entries, not on edit
+  const showPhotoUpload = !existingEntry
 
   if (!isLoaded) {
     return (
@@ -206,7 +271,7 @@ export default function SubmitPage() {
         </h1>
         <p className="text-gray-600">
           {existingEntry && !isEditing
-            ? 'You can edit your entry anytime before the contest ends'
+            ? 'You can edit your entry (description or delete photo) anytime before the contest ends'
             : 'Upload a photo of your Halloween costume and enter the contest!'}
         </p>
       </div>
@@ -220,6 +285,19 @@ export default function SubmitPage() {
               fill
               className="object-cover"
             />
+            {/* Heart/likes display below the image */}
+            <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-white/90 rounded-full px-3 py-1 shadow">
+              <Heart
+                className={`h-6 w-6 ${likeInfo.hasLiked ? 'text-pink-500 fill-pink-500' : 'text-gray-300'}`}
+                fill={likeInfo.hasLiked ? '#ec4899' : 'none'}
+              />
+              <span className={`ml-1 text-base font-semibold ${likeInfo.hasLiked ? 'text-pink-600' : 'text-gray-600'}`}>
+                {likeInfo.count}
+              </span>
+              <span className="ml-1 text-xs text-gray-500">
+                {likeInfo.count === 1 ? 'Like' : 'Likes'}
+              </span>
+            </div>
           </div>
           {existingEntry.description && (
             <p className="mb-4 text-gray-700">{existingEntry.description}</p>
@@ -227,9 +305,17 @@ export default function SubmitPage() {
           <div className="flex gap-4">
             <button
               onClick={() => setIsEditing(true)}
-              className="flex-1 rounded-full bg-orange-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-700"
+              className="flex-1 rounded-full bg-green-700 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-600"
             >
-              Edit Entry
+              Edit Title
+            </button>
+            <button
+              onClick={handleDeletePhoto}
+              className="flex-1 rounded-full bg-red-700 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-600 flex items-center justify-center gap-2"
+              disabled={loading}
+            >
+              <Trash2 className="h-5 w-5" />
+              Delete Photo
             </button>
             <Link
               href="/vote"
@@ -257,56 +343,90 @@ export default function SubmitPage() {
                 id="studentId"
                 type="text"
                 value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
+                onChange={handleStudentIdChange}
                 placeholder="e.g., 20123456"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
+                maxLength={8}
+                pattern="\d{8}"
+                inputMode="numeric"
+                autoComplete="off"
               />
+              <div className="mt-1 text-sm text-gray-500">
+                Enter exactly 8 numeric digits.
+              </div>
             </div>
           )}
 
-          <div className="mb-6">
-            <label className="mb-2 block font-semibold text-gray-900">
-              Costume Photo <span className="text-red-600">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                id="file-upload"
-                required={!existingEntry}
-              />
-              <label
-                htmlFor="file-upload"
-                className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 transition-colors hover:bg-gray-100"
-              >
-                {previewUrl ? (
-                  <div className="relative h-64 w-full overflow-hidden rounded-lg">
-                    <Image
-                      src={previewUrl}
-                      alt="Preview"
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity hover:opacity-100">
-                      <Camera className="h-8 w-8 text-white" />
-                      <span className="ml-2 text-white">Change Photo</span>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="mb-2 h-12 w-12 text-gray-400" />
-                    <span className="font-medium text-gray-700">
-                      Click to upload your costume photo
-                    </span>
-                    <span className="mt-1 text-sm text-gray-500">PNG, JPG up to 10MB</span>
-                  </>
-                )}
+          {showPhotoUpload && (
+            <div className="mb-6">
+              <label className="mb-2 block font-semibold text-gray-900">
+                Costume Photo <span className="text-red-600">*</span>
               </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".jpeg,.jpg,.png,image/jpeg,image/jpg,image/png"
+                  onChange={(e) => {
+                    const selectedFile = e.target.files?.[0]
+                    if (selectedFile) {
+                      if (!ACCEPTED_IMAGE_TYPES.includes(selectedFile.type)) {
+                        setError('We only accept JPEG, PNG, or JPG images. If you are using .heic, please change your iOS camera setting. Sad for you 😢')
+                        setFile(null)
+                        setPreviewUrl(null)
+                        return
+                      }
+                      if (selectedFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+                        setError('Image must be less than 5MB.')
+                        setFile(null)
+                        setPreviewUrl(null)
+                        return
+                      }
+                      setError(null)
+                      setFile(selectedFile)
+                      const url = URL.createObjectURL(selectedFile)
+                      setPreviewUrl(url)
+                    }
+                  }}
+                  className="hidden"
+                  id="file-upload"
+                  required={!existingEntry}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 transition-colors hover:bg-gray-100"
+                >
+                  {previewUrl ? (
+                    <div className="relative h-64 w-full overflow-hidden rounded-lg">
+                      <Image
+                        src={previewUrl}
+                        alt="Preview"
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity hover:opacity-100">
+                        <Upload className="h-8 w-8 text-white" />
+                        <span className="ml-2 text-white">Change Photo</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mb-2 h-12 w-12 text-gray-400" />
+                      <span className="font-medium text-gray-700">
+                        Click to upload your costume photo
+                      </span>
+                      <span className="mt-1 text-sm text-gray-500">
+                        Only .jpeg, .png, .jpg files are allowed.<br />
+                        Sorry, <b>.heic</b> format is NOT supported.<br />
+                        If you are using an iPhone, please change your camera settings to save as JPEG instead of HEIC.<br />
+                        Max image size: 5MB.
+                      </span>
+                    </>
+                  )}
+                </label>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mb-6">
             <label htmlFor="description" className="mb-2 block font-semibold text-gray-900">
@@ -339,7 +459,7 @@ export default function SubmitPage() {
             ) : (
               <>
                 <Upload className="h-5 w-5" />
-                {existingEntry ? 'Update Entry' : 'Submit Entry'}
+                {existingEntry ? 'Update Title' : 'Submit Entry'}
               </>
             )}
           </button>
@@ -362,4 +482,3 @@ export default function SubmitPage() {
     </div>
   )
 }
-
