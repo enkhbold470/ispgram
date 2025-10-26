@@ -6,7 +6,7 @@
 ┌─────────────────────────────────────┐
 │  📱 Mobile Header (md:hidden)       │
 │  ┌─────────────────────────────┐   │
-│  │   👻 ISPGram                 │   │
+│  │   🎓 ISPGram                 │   │
 │  └─────────────────────────────┘   │
 ├─────────────────────────────────────┤
 │                                     │
@@ -17,7 +17,7 @@
 │                                     │
 ├─────────────────────────────────────┤
 │  Footer (mb-16 on mobile)           │
-│  🎃 De Anza ISP Halloween 👻       │
+│  🎓 De Anza ISP Education Week 🎉 │
 ├═════════════════════════════════════┤
 │  🏠   📤   ❤️   🏆   👤           │ ← Bottom Nav
 │  Home Submit Vote Results Profile   │   (Fixed, z-50)
@@ -42,8 +42,8 @@ Gray text, 70% opacity labels
 │ Home │  │Submit│  │   Vote   │  │Result│  │Profile│
 └──────┘  └──────┘  └────●─────┘  └──────┘  └──────┘
                     ↑           ↑
-         Gradient bubble  Orange dot
-         Orange text, 100% opacity
+         Gradient bubble  Sky dot
+         Sky text, 100% opacity
          Scaled icon (110%)
 ```
 
@@ -77,7 +77,7 @@ Before:         During Tap:      After:
 
 ### Gradient Accent Line (Top border)
 ```
-Orange → Purple → Orange
+Sky → Indigo → Sky
 #f97316  #a855f7  #f97316
 ```
 

@@ -7,7 +7,7 @@ A beautiful, Clerk-integrated profile editing feature with a modern dialog modal
 ## 🎨 Features
 
 ### Edit Profile Button
-- **Gradient Design**: Orange to orange-700 gradient matching your Halloween theme
+- **Gradient Design**: Sky to indigo gradient matching your Education Week theme
 - **Icon**: Pencil/Edit icon from Lucide
 - **Responsive**: Stacks on mobile, horizontal on desktop
 - **Accessible**: Proper ARIA labels and keyboard navigation
@@ -25,7 +25,7 @@ A beautiful, Clerk-integrated profile editing feature with a modern dialog modal
   - Delete account
   
 ### Custom Styling
-- **Theme Integration**: Orange accents matching your site
+- **Theme Integration**: Sky and indigo accents matching your site
 - **Responsive**: Scrollable on mobile devices
 - **Clean UI**: Borderless card within dialog
 - **Smooth Animations**: Native dialog transitions
@@ -69,7 +69,7 @@ In `edit-profile-button.tsx`:
 ```tsx
 <Button
   variant="default"
-  className="gap-2 bg-purple-600 hover:bg-purple-700" // Change colors
+  className="gap-2 bg-sky-600 hover:bg-sky-700" // Change colors
 >
 ```
 
@@ -84,7 +84,7 @@ In `edit-profile-button.tsx`:
 ```tsx
 appearance={{
   elements: {
-    formButtonPrimary: "bg-purple-600 hover:bg-purple-700", // Different color
+    formButtonPrimary: "bg-sky-600 hover:bg-sky-700", // Different color
     badge: "bg-blue-100 text-blue-800", // Different badge colors
   },
 }}
@@ -174,7 +174,7 @@ await user.update({
 
 1. **Dialog vs Page**: Modal keeps context, no navigation needed
 2. **Clerk Component**: Handles all edge cases, security, validation
-3. **Gradient Buttons**: Consistent with your Halloween theme
+3. **Gradient Buttons**: Consistent with your Education Week theme
 4. **Responsive**: Mobile-first, works everywhere
 
 ## 🔒 Security
@@ -208,4 +208,4 @@ Changes visible immediately
 
 **Simple**: Just one button click to edit everything  
 **Secure**: Clerk handles all the complex security  
-**Beautiful**: Matches your Halloween theme perfectly ✨
+**Beautiful**: Matches your Education Week theme perfectly ✨

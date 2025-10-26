@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const blob = await put(`costumes/${userId}-${Date.now()}.jpg`, file, {
+    const blob = await put(`education-week/${userId}-${Date.now()}.jpg`, file, {
       access: 'public',
     })
 

@@ -98,7 +98,7 @@ The profile page is automatically linked in your mobile nav. Users can:
 - Add ability to change primary email
 - Add 2FA setup section
 - Add activity/login history
-- Add costume submissions section
+- Add Education Week submissions section
 - Add voting history
 
 ---

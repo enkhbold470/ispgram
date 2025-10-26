@@ -39,7 +39,7 @@ export function Leaderboard({ entries }: LeaderboardProps) {
       <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
         <Trophy className="mb-4 h-16 w-16 text-gray-400" />
         <h3 className="mb-2 text-lg font-semibold text-gray-900">No Entries Yet</h3>
-        <p className="text-gray-600">Be the first to submit your costume!</p>
+        <p className="text-gray-600">Be the first to share your Education Week highlight!</p>
       </div>
     )
   }
@@ -62,7 +62,7 @@ export function Leaderboard({ entries }: LeaderboardProps) {
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
               <Image
                 src={entry.photoUrl || 'https://placekeanu.com/500'}
-                alt={`${entry.student.name}'s costume`}
+                alt={`${entry.student.name}'s Education Week highlight`}
                 fill
                 className="object-cover"
                 sizes="64px"
@@ -94,4 +94,3 @@ export function Leaderboard({ entries }: LeaderboardProps) {
     </div>
   )
 }
-

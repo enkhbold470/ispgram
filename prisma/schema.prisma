@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Student who submits a costume entry
+// Student who shares an Education Week entry
 model Student {
   id        String   @id @default(cuid())
   clerkId   String   @unique // Clerk user ID
@@ -25,7 +25,7 @@ model Student {
   @@map("students")
 }
 
-// costume entry
+// Education Week entry
 model Entry {
   id          String   @id @default(cuid())
   studentId   String   @unique // One entry per student

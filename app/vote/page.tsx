@@ -94,8 +94,8 @@ export default function VotePage() {
   if (!isLoaded || loading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-orange-600" />
-        <p className="text-gray-600">Loading costumes...</p>
+        <Loader2 className="h-12 w-12 animate-spin text-sky-600" />
+        <p className="text-gray-600">Loading Education Week entries...</p>
       </div>
     )
   }
@@ -125,13 +125,13 @@ export default function VotePage() {
           <Heart className="mx-auto mb-4 h-16 w-16 text-gray-400" />
           <h2 className="mb-2 text-2xl font-bold text-gray-900">Welcome to Voting!</h2>
           <p className="mb-6 text-gray-600">
-            To vote, you need to submit your own costume entry first.
+            To vote, you&apos;ll need to share your own Education Week highlight first.
           </p>
           <button
             onClick={() => router.push('/submit')}
-            className="rounded-full bg-orange-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-orange-700"
+            className="rounded-full bg-sky-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-sky-700"
           >
-            Submit Your Costume
+            Share Your Entry
           </button>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function VotePage() {
           <Heart className="mx-auto mb-4 h-16 w-16 text-gray-400" />
           <h2 className="mb-2 text-2xl font-bold text-gray-900">No Entries Yet</h2>
           <p className="text-gray-600">
-            Be patient! Entries will appear here once people start submitting their costumes.
+            Be patient! Entries will appear here once people start sharing their Education Week moments.
           </p>
         </div>
       </div>
@@ -158,15 +158,15 @@ export default function VotePage() {
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">Vote for Your Favorites</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Cheer on Your Favorites</h1>
         <p className="text-gray-600">
-          Click the heart to vote! You can vote for as many costumes as you like.
+          Tap the heart to celebrate your peers! Send hearts to as many entries as you like.
         </p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-900">
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-medium text-sky-900">
           <Heart className="h-4 w-4" />
           <span>
             {sortedEntries.length} {sortedEntries.length === 1 ? 'entry' : 'entries'} in
-            the contest
+            the activity
           </span>
         </div>
 
@@ -198,7 +198,7 @@ export default function VotePage() {
       {entriesToVote.length === 0 ? (
         <div className="rounded-lg border bg-white p-8 text-center shadow-lg">
           <p className="text-gray-600">
-            You&apos;re the only entry so far! Invite your friends to submit their costumes.
+            You&apos;re the only entry so far! Invite your friends to share their Education Week highlights.
           </p>
         </div>
       ) : (
@@ -217,4 +217,3 @@ export default function VotePage() {
     </div>
   )
 }
-

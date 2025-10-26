@@ -168,7 +168,7 @@ export default function SubmitPage() {
           throw new Error('Student ID must be exactly 8 digits')
         }
         if (!file) {
-          throw new Error('Please select a photo of your costume')
+          throw new Error('Please select a photo that showcases your Education Week highlight')
         }
       }
 
@@ -278,8 +278,8 @@ export default function SubmitPage() {
             </h2>
             <p className="mb-6 text-gray-600">
               {existingEntry
-                ? 'Your costume entry has been updated successfully.'
-                : 'Your costume has been submitted to the contest!'}
+                ? 'Your Education Week entry has been updated successfully.'
+                : 'Your Education Week moment has been shared!'}
             </p>
             <div className="flex gap-4">
               <Link
@@ -314,12 +314,12 @@ export default function SubmitPage() {
     <div className="mx-auto max-w-2xl">
       <div className="mb-6 text-center">
         <h1 className="mb-2 text-3xl font-bold text-gray-900">
-          {existingEntry && !isEditing ? 'Your Costume Entry' : 'Submit Your Costume'}
+          {existingEntry && !isEditing ? 'Your Education Week Entry' : 'Share Your Education Week Moment'}
         </h1>
         <p className="text-gray-600">
           {existingEntry && !isEditing
-            ? 'You can edit your entry (description or delete photo) anytime before the contest ends'
-            : 'Upload a photo of your Halloween costume and enter the contest!'}
+            ? 'You can update your caption or replace your photo anytime during the activity'
+            : 'Upload a photo that captures your Education Week experience and join the fun!'}
         </p>
       </div>
 
@@ -328,7 +328,7 @@ export default function SubmitPage() {
           {/* Header - Instagram style */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-linear-to-r from-sky-500 to-indigo-500 flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">
                   {user?.firstName?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || 'U'}
                 </span>
@@ -337,12 +337,12 @@ export default function SubmitPage() {
                 <p className="font-semibold text-sm text-gray-900">
                   {user?.fullName || user?.firstName || 'Your Entry'}
                 </p>
-                <p className="text-xs text-gray-500">Halloween Costume 🎃</p>
+                <p className="text-xs text-gray-500">Education Week Highlight 🎓</p>
               </div>
             </div>
             <button
               onClick={() => setIsEditing(true)}
-              className="text-blue-500 text-sm font-semibold hover:text-blue-600"
+              className="text-sky-600 text-sm font-semibold hover:text-sky-700"
             >
               Edit
             </button>
@@ -352,7 +352,7 @@ export default function SubmitPage() {
           <div className="relative aspect-square w-full overflow-hidden bg-black">
             <Image
               src={existingEntry.photoUrl}
-              alt="Your costume"
+              alt="Your Education Week highlight"
               fill
               className="object-contain"
             />
@@ -366,7 +366,7 @@ export default function SubmitPage() {
                 disabled={loading}
                 className="hover:opacity-70 transition-opacity disabled:opacity-50"
               >
-                <Heart className={`h-7 w-7 ${likeInfo.hasLiked ? 'text-pink-500 fill-pink-500' : 'text-gray-800'}`} />
+                <Heart className={`h-7 w-7 ${likeInfo.hasLiked ? 'text-sky-500 fill-sky-500' : 'text-gray-800'}`} />
               </button>
               <button 
                 onClick={handleDeletePhoto}
@@ -401,10 +401,10 @@ export default function SubmitPage() {
               <Button
                 onClick={() => router.push('/vote')}
                 disabled={loading}
-                className="flex-1 bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                className="flex-1 bg-linear-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white"
               >
                 <Heart className="h-4 w-4 mr-2" />
-                Vote for Others
+                Cheer for Others
               </Button>
               <Button
                 onClick={() => router.push('/results')}
@@ -455,10 +455,10 @@ export default function SubmitPage() {
           {showPhotoUpload && (
             <div className="mb-6">
               <label className="mb-2 block font-semibold text-gray-900">
-                Costume Photo <span className="text-red-600">*</span>
+                Education Week Photo <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                < Input
+                <Input
                   type="file"
                   accept=".jpeg,.jpg,.png,image/jpeg,image/jpg,image/png"
                   onChange={(e) => {
@@ -507,7 +507,7 @@ export default function SubmitPage() {
                     <>
                       <Upload className="mb-2 h-12 w-12 text-gray-400" />
                       <span className="font-medium text-gray-700">
-                        Click to upload your costume photo
+                        Click to upload your Education Week photo
                       </span>
                       <span className="mt-1 text-sm text-gray-500">
                         Only .jpeg, .png, .jpg files are allowed.<br />
@@ -530,10 +530,10 @@ export default function SubmitPage() {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tell us about your costume..."
+              placeholder="Tell us about your Education Week moment..."
               maxLength={500}
               rows={4}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
             <div className="mt-1 text-right text-sm text-gray-500">
               {description.length}/500
@@ -543,7 +543,7 @@ export default function SubmitPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-600 to-orange-700 px-6 py-4 font-semibold text-white transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-sky-600 to-indigo-600 px-6 py-4 font-semibold text-white transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
           >
             {loading ? (
               <>
@@ -553,7 +553,7 @@ export default function SubmitPage() {
             ) : (
               <>
                 <Upload className="h-5 w-5" />
-                {existingEntry ? 'Update Title' : 'Submit Entry'}
+                {existingEntry ? 'Update Entry' : 'Share Entry'}
               </>
             )}
           </button>
