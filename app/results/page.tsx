@@ -18,7 +18,7 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-orange-600" />
+        <Loader2 className="h-12 w-12 animate-spin text-sky-600" />
         <p className="text-gray-600">Loading results...</p>
       </div>
     )
@@ -81,14 +81,14 @@ export default function ResultsPage() {
         <div className="mb-4 flex justify-center">
           <Trophy className="h-16 w-16 text-yellow-600" />
         </div>
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">Contest Leaderboard</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Activity Leaderboard</h1>
         <p className="text-gray-600">
-          Live rankings of all costume entries. May the best costume win!
+          Live rankings of every Education Week entry. Let&apos;s celebrate the most engaging highlights!
         </p>
       </div>
 
       {entries.length > 0 && topThree.length > 0 && (
-        <div className="mb-8 rounded-lg border bg-linear-to-r from-yellow-50 to-orange-50 p-6 shadow-lg">
+        <div className="mb-8 rounded-lg border bg-linear-to-r from-sky-50 to-indigo-50 p-6 shadow-lg">
           <h2 className="mb-4 text-center text-xl font-bold text-gray-900">🎉 Top 3 🎉</h2>
           <div className="grid grid-cols-3 gap-4 items-end">
             {displayTopThree.map((entry, olympicIdx) => {
@@ -134,14 +134,12 @@ export default function ResultsPage() {
       <Leaderboard entries={entries} />
 
       {entries.length > 0 && (
-        <div className="mt-8 rounded-lg border bg-blue-50 p-6 text-center">
+        <div className="mt-8 rounded-lg border bg-sky-50 p-6 text-center">
           <p className="text-sm text-gray-700">
-            💡 <strong>Tip:</strong> Share the contest with your friends and ask them to vote for
-            you!
+            💡 <strong>Tip:</strong> Invite classmates to join the activity and cheer on your entry!
           </p>
         </div>
       )}
     </div>
   )
 }
-

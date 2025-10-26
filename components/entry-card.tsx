@@ -66,7 +66,7 @@ export function EntryCard({
       <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
         <Image
           src={entry.photoUrl || 'https://placekeanu.com/500'}
-          alt={`${entry.student.name}'s costume`}
+          alt={`${entry.student.name}'s Education Week highlight`}
           fill
           className="object-cover transition-transform group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -106,4 +106,3 @@ export function EntryCard({
     </div>
   )
 }
-

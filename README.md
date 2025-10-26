@@ -1,12 +1,12 @@
-# 🎃 ISPGram - Halloween Costume Contest
+# 🎓 ISPGram - Education Week Activity Hub
 
-A full-stack Halloween costume contest application built for De Anza College's ISP program. Students can submit their costume photos, vote for their favorites, and compete on the leaderboard.
+A full-stack Education Week activity platform built for De Anza College's ISP program. International students can share their favorite highlights, cheer for one another, and track the friendly leaderboard presented by the De Anza ISP Office.
 
 ## ✨ Features
 
-- **Costume Submissions**: Upload costume photos with descriptions
-- **Voting System**: Vote for multiple costumes with heart reactions
-- **Live Leaderboard**: Real-time rankings with top 3 highlighting
+- **Entry Sharing**: Upload Education Week photos with captions
+- **Cheer System**: Send hearts to multiple highlights and celebrate peers
+- **Friendly Leaderboard**: Real-time rankings with top 3 highlighting
 - **Student Authentication**: Secure sign-in with Clerk
 - **Photo Storage**: Vercel Blob for reliable image hosting
 - **Email Notifications**: Winner notifications via Zoho email
@@ -37,13 +37,13 @@ ispgram/
 │   │   ├── upload/          # Image upload endpoint
 │   │   ├── notify/          # Winner notification endpoint
 │   │   └── student/         # Student data endpoint
-│   ├── submit/              # Costume submission page
-│   ├── vote/                # Voting page
-│   ├── results/             # Leaderboard page
+│   ├── submit/              # Education Week entry submission page
+│   ├── vote/                # Cheering and voting page
+│   ├── results/             # Friendly leaderboard page
 │   ├── layout.tsx           # Root layout with navigation
 │   └── page.tsx             # Landing page
 ├── components/
-│   ├── entry-card.tsx       # Costume entry display card
+│   ├── entry-card.tsx       # Education Week entry display card
 │   ├── vote-button.tsx      # Heart vote button component
 │   └── leaderboard.tsx      # Leaderboard rankings component
 ├── hooks/
@@ -73,8 +73,8 @@ ispgram/
 ### Entry
 - `id`: Unique identifier
 - `studentId`: Foreign key to Student (unique - one entry per student)
-- `description`: Optional costume description
-- `photoUrl`: Vercel Blob URL
+- `description`: Optional highlight description
+- `photoUrl`: Vercel Blob URL for the shared moment
 - Relations: Belongs to student, has many votes
 
 ### Vote
@@ -142,8 +142,8 @@ pnpm dev
 ### For Students
 
 1. **Sign Up/Sign In**: Use your email to create an account via Clerk
-2. **Submit Entry**: Navigate to `/submit` and upload your costume photo with your De Anza Student ID
-3. **Vote**: Go to `/vote` to see all entries and vote for your favorites (must submit entry first)
+2. **Share Entry**: Navigate to `/submit` and upload the Education Week photo you want to highlight along with your De Anza Student ID
+3. **Cheer**: Go to `/vote` to see all entries and send hearts to your favorites (must share an entry first)
 4. **Check Rankings**: Visit `/results` to see the live leaderboard
 
 ### For Admins
@@ -153,7 +153,7 @@ pnpm dev
 
 ## 🎨 Design Features
 
-- **Halloween Theme**: Orange, purple, and black color scheme
+- **Education Week Theme**: Sky and indigo gradients with uplifting accents
 - **Responsive Grid**: Adapts to mobile, tablet, and desktop screens
 - **Smooth Animations**: Hover effects and transitions throughout
 - **Loading States**: Skeleton loaders and spinners for better UX
@@ -211,8 +211,8 @@ MIT License - Feel free to use this project for educational purposes.
 
 ## 🎓 Credits
 
-Developed for De Anza College ISP Halloween Costume Contest 2025.
+Developed for De Anza College ISP Education Week Activity 2025.
 
 ---
 
-Made with 💜 by the De Anza ISP Team
+Made with 💙 by the De Anza ISP Team
