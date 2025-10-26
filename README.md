@@ -9,6 +9,7 @@ A full-stack Education Week activity platform built for De Anza College's ISP pr
 - **Friendly Leaderboard**: Real-time rankings with top 3 highlighting
 - **Student Authentication**: Secure sign-in with Clerk
 - **Photo Storage**: Vercel Blob for reliable image hosting
+- **NSFW Content Filter**: Automatic detection and blocking of inappropriate images using TensorFlow.js
 - **Email Notifications**: Winner notifications via Zoho email
 - **Responsive Design**: Beautiful UI that works on all devices
 
@@ -20,6 +21,7 @@ A full-stack Education Week activity platform built for De Anza College's ISP pr
 - **Database**: PostgreSQL (Neon)
 - **ORM**: Prisma
 - **File Storage**: Vercel Blob
+- **Content Moderation**: TensorFlow.js + NSFWJS for image analysis
 - **Email**: Zoho ZeptoMail
 - **Package Manager**: pnpm
 
@@ -165,6 +167,7 @@ pnpm dev
 - Clerk authentication for all protected routes
 - Middleware protection for API routes
 - Student ID verification
+- **NSFW content filtering** with TensorFlow.js (blocks inappropriate images)
 - One entry per student constraint
 - One vote per entry per student constraint
 - Cascade deletes for data integrity

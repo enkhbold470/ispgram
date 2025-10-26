@@ -196,7 +196,8 @@ export default function SubmitPage() {
         })
 
         if (!uploadResponse.ok) {
-          throw new Error('Failed to upload photo')
+          const uploadError = await uploadResponse.json()
+          throw new Error(uploadError.error || 'Failed to upload photo')
         }
 
         const uploadData = await uploadResponse.json()
