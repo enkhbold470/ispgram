@@ -110,7 +110,7 @@ export default function ResultsPage() {
                   <h3 className={`mb-1 font-bold text-gray-900 ${nameSizes[olympicIdx]}`}>{entry.student.name}</h3>
                   <p className={`font-bold text-gray-900 ${olympicIdx === 1 ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>{entry.voteCount}</p>
                   <p className={`text-sm text-gray-600`}>
-                    {entry.voteCount === 1 ? 'vote' : 'votes'}
+                    {entry.voteCount === 1 ? 'like' : 'likes'}
                   </p>
                 </div>
               )

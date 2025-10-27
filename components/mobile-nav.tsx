@@ -2,9 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, Upload, Heart, Trophy, User } from "lucide-react";
+import { Home, User } from "lucide-react";
 import { SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { siteConfig } from "@/config/siteConfig";
 
 interface NavItem {
   href: string;
@@ -13,6 +14,7 @@ interface NavItem {
   activePattern: RegExp;
 }
 
+// Build navigation items from siteConfig
 const navItems: NavItem[] = [
   {
     href: "/",
@@ -20,24 +22,20 @@ const navItems: NavItem[] = [
     icon: Home,
     activePattern: /^\/$/,
   },
-  {
-    href: "/submit",
-    label: "Submit",
-    icon: Upload,
-    activePattern: /^\/submit/,
-  },
-  {
-    href: "/vote",
-    label: "Vote",
-    icon: Heart,
-    activePattern: /^\/vote/,
-  },
-  {
-    href: "/results",
-    label: "Results",
-    icon: Trophy,
-    activePattern: /^\/results/,
-  },
+  ...siteConfig.navigation.map((item) => {
+    // Get the icon from the corresponding feature or hero button
+    const featureMatch = siteConfig.features.find(f => 
+      item.href.includes(f.title.toLowerCase().split(' ')[0].toLowerCase())
+    );
+    const buttonMatch = siteConfig.hero.ctaButtons.find(b => b.href === item.href);
+    
+    return {
+      href: item.href,
+      label: item.label,
+      icon: buttonMatch?.icon || featureMatch?.icon || Home,
+      activePattern: new RegExp(`^${item.href}`),
+    };
+  }),
 ];
 
 export function MobileNav() {
@@ -54,7 +52,7 @@ export function MobileNav() {
       {/* Backdrop blur with gradient border */}
       <div className="relative border-t border-orange-100 bg-white/80 backdrop-blur-xl">
         {/* Gradient accent line */}
-        <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-orange-500 via-purple-500 to-orange-500" />
+        <div className="absolute left-0 right-0 top-0 h-[2px] bg-linear-to-r from-orange-500 via-purple-500 to-orange-500" />
         
         {/* Safe area padding for notched devices */}
         <div className="pb-safe">
@@ -79,7 +77,7 @@ export function MobileNav() {
                 >
                   {/* Active indicator bubble */}
                   {active && (
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-100 to-purple-50 opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-100 to-purple-50 opacity-100 transition-opacity" />
                   )}
 
                   {/* Icon with scale animation */}
@@ -125,7 +123,7 @@ export function MobileNav() {
                 aria-current={pathname === "/profile" ? "page" : undefined}
               >
                 {pathname === "/profile" && (
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-100 to-purple-50 opacity-100" />
+                  <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-100 to-purple-50 opacity-100" />
                 )}
                 
                 <div className="relative z-10">

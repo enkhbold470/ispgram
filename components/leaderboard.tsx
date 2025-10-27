@@ -85,7 +85,7 @@ export function Leaderboard({ entries }: LeaderboardProps) {
                 {entry.voteCount}
               </span>
               <span className="text-xs text-gray-600">
-                {entry.voteCount === 1 ? 'vote' : 'votes'}
+                {entry.voteCount === 1 ? 'like' : 'likes'}
               </span>
             </div>
           </div>
