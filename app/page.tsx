@@ -1,8 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { siteConfig } from "@/config/siteConfig";
 
 export default function Home() {
-  const { hero, activityHighlights, features, theme } = siteConfig;
+  const { hero, showcase, activityHighlights, features } = siteConfig;
   const HeroIcon = hero.icon;
   const HighlightsIcon = activityHighlights.icon;
 
@@ -71,6 +72,51 @@ export default function Home() {
             ))}
           </ul>
         </div>
+
+
+
+        {/* Showcase Preview */}
+        <div className="mt-16">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-primary">{showcase.title}</h2>
+            <p className="mt-2 text-muted-foreground">{showcase.subtitle}</p>
+          </div>
+
+          <div className="grid gap-12 md:grid-cols-2">
+            {showcase.items.map((item, index) => {
+              const ItemIcon = item.icon;
+              
+              return (
+                <div key={index} className="flex flex-col items-center">
+                  {/* iPhone Mockup Display */}
+                  <div className="relative w-full max-w-[300px]">
+                    <div className="relative aspect-[9/19.5]">
+                      <Image
+                        src={item.image}
+                        alt={`${item.title} preview`}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 300px"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="mt-6 text-center">
+                    <div className="mb-2 flex items-center justify-center gap-2">
+                      <ItemIcon className={`h-5 w-5 ${item.iconColor}`} />
+                      <h3 className="text-xl font-bold text-card-foreground">{item.title}</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
 
         {/* Features */}
         <div className="mt-12 grid gap-6 sm:grid-cols-3">
