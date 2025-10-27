@@ -4,8 +4,8 @@ export const siteConfig = {
   // Basic Site Info
   name: 'ISPGram',
   title: 'ISPGram - De Anza ISP Photo Contest',
-  description: 'Share your adventures! Upload pictures from your home country, travels, or the US. Contest closes November 8th. Winners featured in the ISP Office!',
-  shortDescription: 'Share your adventures—upload one photo from anywhere in the world (update anytime until Nov 8th)',
+  description: 'Share your adventures! Upload pictures from your home country, travels, or the US. Contest closes November 28th. Winners featured in the ISP Office!',
+  shortDescription: 'Share your adventures—upload one photo from anywhere in the world (update anytime until Nov 28th)',
 
   // Navigation
   navigation: [
@@ -20,7 +20,7 @@ export const siteConfig = {
     icon: GraduationCap,
     title: 'ISPGram Photo Contest',
     subtitle: 'Share Your Adventures Around the World',
-    description: 'Join the De Anza ISP Office photo contest! Share a picture from your home country, your travels, or the US. Get likes from friends and climb the leaderboard. Contest closes November 8th—winners will be featured in the ISP Office! 🌟',
+    description: 'Join the De Anza ISP Office photo contest! Share a picture from your home country, your travels, or the US. Get likes from friends and climb the leaderboard. Contest closes November 28th—winners will be featured in the ISP Office! 🌟',
     ctaButtons: [
       {
         href: '/submit',
@@ -52,7 +52,7 @@ export const siteConfig = {
       },
       {
         label: 'Deadline:',
-        description: 'Contest closes November 8th (you can update your entry anytime before then)',
+        description: 'Contest closes November 28th (you can update your entry anytime before then)',
       },
       {
         label: 'Scoring:',
@@ -89,7 +89,7 @@ export const siteConfig = {
 
   // Footer
   footer: {
-    text: 'Presented by the De Anza ISP Office Photo Contest—share your adventures and have fun! Contest closes November 8th. 💙',
+    text: 'Presented by the De Anza ISP Office Photo Contest—share your adventures and have fun! Contest closes November 28th. 💙',
   },
 
   // Theme Colors
