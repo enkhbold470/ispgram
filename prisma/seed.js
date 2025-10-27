@@ -2,25 +2,26 @@
 // Run with: pnpm prisma db seed (after configuring package.json prisma.seed)
 
 const { PrismaClient } = require('@prisma/client')
+const { randomUUID } = require('crypto')
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('Seeding database...')
 
   // Clean existing data (order matters due to FKs)
-  await prisma.vote.deleteMany()
-  await prisma.entry.deleteMany()
-  await prisma.student.deleteMany()
+  // await prisma.vote.deleteMany()
+  // await prisma.entry.deleteMany()
+  // await prisma.student.deleteMany()
 
   // Create students
-  const studentCount = 12
+  const studentCount = 1
   const students = []
   for (let i = 1; i <= studentCount; i++) {
-    const email = `student${i}@example.com`
+    const email = `student${randomUUID().slice(0, 8)}@example.com`
     const data = {
-      clerkId: `clerk_${i}`,
-      studentId: `DA${10000000 + i}`,
-      name: `Student ${i}`,
+      clerkId: `clerk_${randomUUID()}`,
+      studentId: `DA${randomUUID().slice(0, 8).toUpperCase()}`,
+      name: `Amanda Baasanjargal`,
       email,
     }
     const student = await prisma.student.create({ data })
@@ -35,9 +36,9 @@ async function main() {
     const entry = await prisma.entry.create({
       data: {
         studentId: owner.id, // relation uses Student.id
-        description: `Keanu look ${i + 1}`,
+        description: `SF ${i + 1}`,
         // placekeanu.com/500 with a cache-busting param to vary images
-        photoUrl: `https://placekeanu.com/500?v=${i + 1}`,
+        photoUrl: `https://www.shutterstock.com/image-photo/confident-smiling-middle-aged-business-260nw-2451544833.jpg`,
       },
     })
     entries.push(entry)
