@@ -10,7 +10,7 @@ import { shuffle } from '@/lib/utils'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 
-export default function VotePage() {
+export default function LikesPage() {
   const { user, isLoaded } = useUser()
   const router = useRouter()
   const { entries, loading, error, refetch } = useEntries()
@@ -19,16 +19,16 @@ export default function VotePage() {
     studentId: string
     name: string
   } | null>(null)
-  const [voting, setVoting] = useState(false)
+  const [liking, setLiking] = useState(false)
   const [sortByLikes, setSortByLikes] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Sort entries based on the selected mode
   const sortedEntries = useMemo(() => {
     if (entries.length === 0) return []
-    
+
     if (sortByLikes) {
-      // Sort by vote count (descending)
+      // Sort by like count (descending)
       return [...entries].sort((a, b) => b.voteCount - a.voteCount)
     } else {
       // Randomize entries
@@ -59,10 +59,10 @@ export default function VotePage() {
     fetchStudent()
   }, [user, isLoaded, router])
 
-  const handleVote = async (entryId: string) => {
-    if (voting) return
+  const handleLike = async (entryId: string) => {
+    if (liking) return
 
-    setVoting(true)
+    setLiking(true)
     try {
       const response = await fetch('/api/votes', {
         method: 'POST',
@@ -72,16 +72,16 @@ export default function VotePage() {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to vote')
+        throw new Error(error.error || 'Failed to like')
       }
 
-      // Vote counts are updated optimistically by VoteButton component
+      // Like counts are updated optimistically by VoteButton component
       // No need to refetch here
     } catch (err) {
-      console.error('Vote error:', err)
-      alert(err instanceof Error ? err.message : 'Failed to vote. Please try again.')
+      console.error('Like error:', err)
+      alert(err instanceof Error ? err.message : 'Failed to like. Please try again.')
     } finally {
-      setVoting(false)
+      setLiking(false)
     }
   }
 
@@ -123,9 +123,9 @@ export default function VotePage() {
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border bg-white p-8 shadow-lg text-center">
           <Heart className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-          <h2 className="mb-2 text-2xl font-bold text-gray-900">Welcome to Voting!</h2>
+          <h2 className="mb-2 text-2xl font-bold text-gray-900">Welcome to Liking!</h2>
           <p className="mb-6 text-gray-600">
-            To vote, you&apos;ll need to share your own Education Week highlight first.
+            To like entries, you&apos;ll need to share your own Education Week highlight first.
           </p>
           <button
             onClick={() => router.push('/submit')}
@@ -152,15 +152,15 @@ export default function VotePage() {
     )
   }
 
-  // Allow voting on all entries including own entry
-  const entriesToVote = sortedEntries
+  // Allow liking on all entries including own entry
+  const entriesToLike = sortedEntries
 
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-3xl font-bold text-gray-900">Cheer on Your Favorites</h1>
         <p className="text-gray-600">
-          Tap the heart to celebrate your peers! Send hearts to as many entries as you like.
+          Tap the heart to celebrate your peers! Send hearts (likes) to as many entries as you like.
         </p>
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-medium text-sky-900">
           <Heart className="h-4 w-4" />
@@ -195,7 +195,7 @@ export default function VotePage() {
         </div>
       </div>
 
-      {entriesToVote.length === 0 ? (
+      {entriesToLike.length === 0 ? (
         <div className="rounded-lg border bg-white p-8 text-center shadow-lg">
           <p className="text-gray-600">
             You&apos;re the only entry so far! Invite your friends to share their Education Week highlights.
@@ -203,12 +203,12 @@ export default function VotePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {entriesToVote.map((entry) => (
+          {entriesToLike.map((entry) => (
             <EntryCard
               key={entry.id}
               entry={entry}
               currentStudentId={currentStudent.id}
-              onVote={handleVote}
+              onVote={handleLike}
               showVoteButton={true}
             />
           ))}

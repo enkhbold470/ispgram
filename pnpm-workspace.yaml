@@ -1,6 +1,0 @@
-ignoredBuiltDependencies:
-  - '@tensorflow/tfjs-node'
-  - core-js
-
-onlyBuiltDependencies:
-  - canvas
