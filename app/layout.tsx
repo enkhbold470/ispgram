@@ -26,7 +26,7 @@ export default function RootLayout({
         >
           <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg md:block hidden">
             <div className="container mx-auto flex items-center justify-between px-4 py-4">
-              <Link href="/" className={`flex items-center gap-2 text-xl font-bold text-${siteConfig.theme.primary} hover:text-sky-700`}>
+              <Link href="/" className="flex items-center gap-2 text-xl font-bold text-theme-primary hover:text-theme-primary-hover">
                 <LogoIcon className="h-6 w-6" />
                 <span>{siteConfig.name}</span>
               </Link>
@@ -36,7 +36,7 @@ export default function RootLayout({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`text-sm font-medium text-gray-700 transition-colors hover:text-${siteConfig.theme.primary}`}
+                    className="text-sm font-medium text-gray-700 transition-colors hover:text-theme-primary"
                   >
                     {item.label}
                   </Link>
@@ -47,7 +47,7 @@ export default function RootLayout({
                 </SignedIn>
                 <SignedOut>
                   <SignInButton mode="modal">
-                    <button className={`rounded-full bg-${siteConfig.theme.primary} px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700`}>
+                    <button className="rounded-full bg-theme-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-theme-primary-hover">
                       Sign In
                     </button>
                   </SignInButton>
@@ -59,7 +59,7 @@ export default function RootLayout({
           {/* Mobile-only header with logo */}
           <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg md:hidden">
             <div className="container mx-auto flex items-center justify-center px-4 py-3">
-              <Link href="/" className={`flex items-center gap-2 text-lg font-bold text-${siteConfig.theme.primary}`}>
+              <Link href="/" className="flex items-center gap-2 text-lg font-bold text-theme-primary">
                 <LogoIcon className="h-5 w-5" />
                 <span>{siteConfig.name}</span>
               </Link>

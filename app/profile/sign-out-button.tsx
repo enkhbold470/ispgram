@@ -27,7 +27,7 @@ export default function SignOutButtonComponent() {
       onClick={handleSignOut}
       disabled={isLoading}
       variant="outline"
-      className="gap-2 border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+      className="gap-2 border-theme-accent-muted text-theme-accent hover:bg-theme-accent-light hover:text-theme-accent-hover"
     >
       <LogOut className="h-4 w-4" />
       {isLoading ? "Signing out..." : "Sign Out"}

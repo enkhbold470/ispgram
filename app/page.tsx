@@ -42,8 +42,8 @@ export default function Home() {
                 href={button.href}
                 className={
                   isPrimary
-                    ? `group flex items-center gap-2 rounded-full bg-linear-to-r from-${theme.primary} to-${theme.secondary} px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl`
-                    : `group flex items-center gap-2 rounded-full border-2 border-${theme.secondary} bg-white px-8 py-4 text-lg font-semibold text-${theme.secondary} shadow-lg transition-all hover:scale-105 hover:bg-indigo-50 hover:shadow-xl`
+                    ? "group flex items-center gap-2 rounded-full bg-linear-to-r from-theme-primary to-theme-secondary px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+                    : "group flex items-center gap-2 rounded-full border-2 border-theme-secondary bg-white px-8 py-4 text-lg font-semibold text-theme-secondary shadow-lg transition-all hover:scale-105 hover:bg-theme-secondary-light hover:shadow-xl"
                 }
               >
                 <ButtonIcon className="h-5 w-5" />

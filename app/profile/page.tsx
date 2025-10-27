@@ -55,12 +55,12 @@ export default async function ProfilePage() {
       </div>
 
       {/* Main Profile Card */}
-      <Card className="overflow-hidden border-orange-100">
-        <div className="bg-gradient-to-r from-orange-50 via-purple-50 to-orange-50 p-6">
+      <Card className="overflow-hidden border-theme-accent-border">
+        <div className="bg-gradient-to-r from-theme-accent-light via-theme-tertiary-light to-theme-accent-light p-6">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-            <Avatar className="h-24 w-24 border-4 border-white shadow-lg ring-2 ring-orange-200">
+            <Avatar className="h-24 w-24 border-4 border-white shadow-lg ring-2 ring-theme-accent-muted">
               <AvatarImage src={user.imageUrl} alt={fullName} />
-              <AvatarFallback className="bg-gradient-to-br from-orange-400 to-purple-400 text-xl font-bold text-white">
+              <AvatarFallback className="bg-gradient-to-br from-theme-accent to-theme-tertiary text-xl font-bold text-white">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -75,7 +75,7 @@ export default async function ProfilePage() {
 
               {primaryEmail && (
                 <div className="flex items-center justify-center gap-2 text-gray-700 sm:justify-start">
-                  <Mail className="h-4 w-4 text-orange-600" />
+                  <Mail className="h-4 w-4 text-theme-accent" />
                   <span className="text-sm">{primaryEmail}</span>
                 </div>
               )}
@@ -104,7 +104,7 @@ export default async function ProfilePage() {
             {/* Email Addresses */}
             <div>
               <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <Mail className="h-5 w-5 text-orange-600" />
+                <Mail className="h-5 w-5 text-theme-accent" />
                 Email Addresses
               </h3>
               <div className="space-y-2">
@@ -122,7 +122,7 @@ export default async function ProfilePage() {
                         {email.verification?.status === "verified" && (
                           <Badge
                             variant="outline"
-                            className="border-green-200 text-green-700"
+                            className="border-success-light text-success"
                           >
                             <Shield className="mr-1 h-3 w-3" />
                             Verified
@@ -140,7 +140,7 @@ export default async function ProfilePage() {
             {/* Account Information */}
             <div>
               <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <UserIcon className="h-5 w-5 text-orange-600" />
+                <UserIcon className="h-5 w-5 text-theme-accent" />
                 Account Information
               </h3>
               <div className="space-y-3 rounded-lg border bg-gray-50 p-4">
@@ -166,7 +166,7 @@ export default async function ProfilePage() {
                   <span className="text-sm font-medium text-gray-600">
                     Account Status
                   </span>
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+                  <Badge className="bg-success-light text-success hover:bg-success-light">
                     Active
                   </Badge>
                 </div>

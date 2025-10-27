@@ -18,7 +18,7 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-sky-600" />
+        <Loader2 className="h-12 w-12 animate-spin text-theme-primary" />
         <p className="text-gray-600">Loading results...</p>
       </div>
     )
@@ -27,7 +27,7 @@ export default function ResultsPage() {
   if (error) {
     return (
       <div className="mx-auto max-w-2xl">
-        <div className="flex items-center gap-3 rounded-lg bg-red-50 p-6 text-red-700">
+        <div className="flex items-center gap-3 rounded-lg bg-error-light p-6 text-error">
           <AlertCircle className="h-6 w-6" />
           <div>
             <h3 className="font-semibold">Error Loading Results</h3>
@@ -54,7 +54,7 @@ export default function ResultsPage() {
 
   // Medal icons and border colors for [3rd, 1st, 2nd]
   const medals = ['🥉', '🥇', '🥈']
-  const borders = ['border-orange-400', 'border-yellow-400', 'border-gray-400']
+  const borders = ['border-[var(--rank-bronze)]', 'border-[var(--rank-gold)]', 'border-[var(--rank-silver)]']
   // Extra: Different box/sizing for 1st (middle) place
   const cardClasses = [
     // 3rd place: slightly smaller
@@ -79,7 +79,7 @@ export default function ResultsPage() {
     <div className="mx-auto max-w-4xl">
       <div className="mb-8 text-center">
         <div className="mb-4 flex justify-center">
-          <Trophy className="h-16 w-16 text-yellow-600" />
+          <Trophy className="h-16 w-16 text-theme-accent" />
         </div>
         <h1 className="mb-2 text-3xl font-bold text-gray-900">Activity Leaderboard</h1>
         <p className="text-gray-600">
@@ -134,7 +134,7 @@ export default function ResultsPage() {
       <Leaderboard entries={entries} />
 
       {entries.length > 0 && (
-        <div className="mt-8 rounded-lg border bg-sky-50 p-6 text-center">
+        <div className="mt-8 rounded-lg border bg-theme-primary-light p-6 text-center">
           <p className="text-sm text-gray-700">
             💡 <strong>Tip:</strong> Invite classmates to join the activity and cheer on your entry!
           </p>

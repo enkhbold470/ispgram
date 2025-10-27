@@ -51,8 +51,8 @@ export function VoteButton({
         'flex items-center gap-2 rounded-full px-4 py-2 font-medium transition-all',
         'hover:scale-105 active:scale-95',
         voted
-          ? 'bg-red-500 text-white shadow-lg shadow-red-500/50'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+          ? 'bg-vote-active text-white shadow-[0_10px_15px_-3px_var(--vote-active-shadow),0_4px_6px_-4px_var(--vote-active-shadow)]'
+          : 'bg-vote-inactive text-gray-700 hover:bg-vote-inactive-hover',
         (loading || disabled) && 'cursor-not-allowed opacity-50'
       )}
     >

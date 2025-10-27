@@ -259,7 +259,7 @@ export default function SubmitPage() {
   if (!isLoaded) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-theme-accent" />
       </div>
     )
   }
@@ -273,7 +273,7 @@ export default function SubmitPage() {
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border bg-white p-8 shadow-lg">
           <div className="flex flex-col items-center text-center">
-            <CheckCircle className="mb-4 h-16 w-16 text-green-600" />
+            <CheckCircle className="mb-4 h-16 w-16 text-success" />
             <h2 className="mb-2 text-2xl font-bold text-gray-900">
               {existingEntry ? 'Entry Updated!' : 'Submission Successful!'}
             </h2>
@@ -285,7 +285,7 @@ export default function SubmitPage() {
             <div className="flex gap-4">
               <Link
                 href="/vote"
-                className="rounded-full bg-purple-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-purple-700"
+                className="rounded-full bg-theme-tertiary px-6 py-3 font-semibold text-white transition-colors hover:bg-theme-secondary"
               >
                 Vote for Others
               </Link>
@@ -329,7 +329,7 @@ export default function SubmitPage() {
           {/* Header - Instagram style */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-linear-to-r from-sky-500 to-indigo-500 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-linear-to-r from-theme-primary to-theme-secondary flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">
                   {user?.firstName?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || 'U'}
                 </span>
@@ -343,7 +343,7 @@ export default function SubmitPage() {
             </div>
             <button
               onClick={() => setIsEditing(true)}
-              className="text-sky-600 text-sm font-semibold hover:text-sky-700"
+              className="text-theme-primary text-sm font-semibold hover:text-theme-primary-hover"
             >
               Edit
             </button>
@@ -367,20 +367,20 @@ export default function SubmitPage() {
                 disabled={loading}
                 className="hover:opacity-70 transition-opacity disabled:opacity-50"
               >
-                <Heart className={`h-7 w-7 ${likeInfo.hasLiked ? 'text-sky-500 fill-sky-500' : 'text-gray-800'}`} />
+                <Heart className={`h-7 w-7  ${likeInfo.hasLiked ? 'text-vote-active fill-vote-active' : 'text-primary '}`} />
               </button>
               <button 
                 onClick={handleDeletePhoto}
                 disabled={loading}
                 className="hover:opacity-70 transition-opacity ml-auto disabled:opacity-50"
               >
-                <Trash2 className="h-6 w-6 text-red-500" />
+                <Trash2 className="h-6 w-6 text-error" />
               </button>
             </div>
 
             {/* Likes count */}
             <div className="mt-2 mb-2">
-              <p className="font-semibold text-sm text-gray-900">
+              <p className="font-semibold text-sm text-primary">
                 {likeInfo.count === 1 ? '1 like' : `${likeInfo.count} likes`}
               </p>
             </div>
@@ -402,7 +402,7 @@ export default function SubmitPage() {
               <Button
                 onClick={() => router.push('/vote')}
                 disabled={loading}
-                className="flex-1 bg-linear-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white"
+                className="flex-1 bg-linear-to-r from-theme-primary to-theme-secondary hover:from-theme-primary-hover hover:to-theme-secondary-hover text-white"
               >
                 <Heart className="h-4 w-4 mr-2" />
                 Cheer for Others
@@ -433,7 +433,7 @@ export default function SubmitPage() {
           {!existingEntry && (
             <div className="mb-6">
               <label htmlFor="studentId" className="mb-2 block font-semibold text-gray-900">
-                De Anza Student ID <span className="text-red-600">*</span>
+                De Anza Student ID <span className="text-error">*</span>
               </label>
               <Input
                 id="studentId"
@@ -456,7 +456,7 @@ export default function SubmitPage() {
           {showPhotoUpload && (
             <div className="mb-6">
               <label className="mb-2 block font-semibold text-gray-900">
-                Education Week Photo <span className="text-red-600">*</span>
+                Education Week Photo <span className="text-error">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -534,7 +534,7 @@ export default function SubmitPage() {
               placeholder="Tell us about your Education Week moment..."
               maxLength={500}
               rows={4}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-primary"
             />
             <div className="mt-1 text-right text-sm text-gray-500">
               {description.length}/500
@@ -544,7 +544,7 @@ export default function SubmitPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-sky-600 to-indigo-600 px-6 py-4 font-semibold text-white transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-theme-primary to-theme-secondary px-6 py-4 font-semibold text-white transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
           >
             {loading ? (
               <>
