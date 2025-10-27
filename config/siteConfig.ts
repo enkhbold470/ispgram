@@ -3,9 +3,9 @@ import { GraduationCap, Trophy, Heart, Upload } from "lucide-react";
 export const siteConfig = {
   // Basic Site Info
   name: 'ISPGram',
-  title: 'ISPGram - De Anza ISP Education Week Activity',
-  description: 'Education Week activity by the De Anza ISP Office for the International Student Program—share your photos, enjoy the friendly gamified celebration, and have fun together!',
-  shortDescription: 'Share one Education Week experience—photos, projects, or moments (update anytime)',
+  title: 'ISPGram - De Anza ISP Photo Contest',
+  description: 'Share your adventures! Upload pictures from your home country, travels, or the US. Contest closes November 8th. Winners featured in the ISP Office!',
+  shortDescription: 'Share your adventures—upload one photo from anywhere in the world (update anytime until Nov 8th)',
 
   // Navigation
   navigation: [
@@ -18,19 +18,19 @@ export const siteConfig = {
   hero: {
     emoji: ['🎓', '📚'],
     icon: GraduationCap,
-    title: 'ISPGram',
-    subtitle: 'De Anza ISP Education Week Activity',
-    description: 'Join the Education Week activity hosted by the De Anza ISP Office for the International Student Program—share your photos, enjoy the gamified challenge, and have fun together! Presented with love by the De Anza ISP Office. Have fun, guys! 🌟',
+    title: 'ISPGram Photo Contest',
+    subtitle: 'Share Your Adventures Around the World',
+    description: 'Join the De Anza ISP Office photo contest! Share a picture from your home country, your travels, or the US. Get likes from friends and climb the leaderboard. Contest closes November 8th—winners will be featured in the ISP Office! 🌟',
     ctaButtons: [
       {
         href: '/submit',
-        label: 'Participate',
+        label: 'Upload Your Photo',
         icon: Upload,
         variant: 'primary' as const,
       },
       {
         href: '/vote',
-        label: 'Cheer for Your Friends',
+        label: 'Like Friends\' Photos',
         icon: Heart,
         variant: 'secondary' as const,
       },
@@ -39,24 +39,28 @@ export const siteConfig = {
 
   // Activity Highlights
   activityHighlights: {
-    title: 'Activity Highlights',
+    title: 'Contest Details',
     icon: Trophy,
     items: [
       {
         label: 'Who can participate:',
-        description: 'De Anza College ISP students celebrating Education Week',
+        description: 'De Anza College ISP students',
       },
       {
-        label: 'Submissions:',
-        description: 'Share one Education Week experience—photos, projects, or moments (update anytime)',
+        label: 'Photo Theme:',
+        description: 'Share pictures from your home country, travels, or the US—show us your adventures!',
       },
       {
-        label: 'Voting:',
-        description: 'Celebrate your friends by liking as many entries as you enjoy!',
+        label: 'Deadline:',
+        description: 'Contest closes November 8th (you can update your entry anytime before then)',
       },
       {
-        label: 'Recognition:',
-        description: 'Top entries earn shout-outs from the ISP Office—have fun and get involved! 🎉',
+        label: 'Scoring:',
+        description: 'Get likes from friends to climb the leaderboard—the more likes, the higher you rank!',
+      },
+      {
+        label: 'Winner Recognition:',
+        description: 'Top entries will be featured in the ISP Office—join the fun and share your story! 🎉',
       },
     ],
   },
@@ -65,27 +69,27 @@ export const siteConfig = {
   features: [
     {
       icon: Upload,
-      title: 'Easy Sharing',
-      description: 'Highlight your Education Week story with a quick photo and caption',
+      title: 'Easy Photo Upload',
+      description: 'Share your adventures with a photo and caption from anywhere in the world',
       color: 'text-sky-600' as const,
     },
     {
       icon: Heart,
-      title: 'Support Friends',
-      description: 'Send hearts to the moments that inspire you and boost their points',
+      title: 'Like & Support',
+      description: 'Give likes to photos you love and help friends climb the leaderboard',
       color: 'text-indigo-600' as const,
     },
     {
       icon: Trophy,
-      title: 'Friendly Leaderboard',
-      description: 'Follow the friendly competition with real-time recognition',
+      title: 'Live Leaderboard',
+      description: 'Track rankings in real-time based on likes—winners featured in ISP Office!',
       color: 'text-amber-500' as const,
     },
   ],
 
   // Footer
   footer: {
-    text: 'Presented by the De Anza ISP Office for International Student Program Education Week activities—have fun, guys! 💙',
+    text: 'Presented by the De Anza ISP Office Photo Contest—share your adventures and have fun! Contest closes November 8th. 💙',
   },
 
   // Theme Colors
