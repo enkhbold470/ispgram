@@ -94,7 +94,7 @@ export default function LikesPage() {
   if (!isLoaded || loading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-sky-600" />
+        <Loader2 className="h-12 w-12 animate-spin text-theme-primary" />
         <p className="text-gray-600">Loading Education Week entries...</p>
       </div>
     )
@@ -107,7 +107,7 @@ export default function LikesPage() {
   if (error) {
     return (
       <div className="mx-auto max-w-2xl">
-        <div className="flex items-center gap-3 rounded-lg bg-red-50 p-6 text-red-700">
+        <div className="flex items-center gap-3 rounded-lg bg-error-light p-6 text-error">
           <AlertCircle className="h-6 w-6" />
           <div>
             <h3 className="font-semibold">Error Loading Entries</h3>
@@ -129,7 +129,7 @@ export default function LikesPage() {
           </p>
           <button
             onClick={() => router.push('/submit')}
-            className="rounded-full bg-sky-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-sky-700"
+            className="rounded-full bg-theme-primary px-8 py-3 font-semibold text-white transition-colors hover:bg-theme-primary-hover"
           >
             Share Your Entry
           </button>
@@ -162,7 +162,7 @@ export default function LikesPage() {
         <p className="text-gray-600">
           Tap the heart to celebrate your peers! Send hearts (likes) to as many entries as you like.
         </p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-medium text-sky-900">
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-theme-primary-light px-4 py-2 text-sm font-medium text-gray-900">
           <Heart className="h-4 w-4" />
           <span>
             {sortedEntries.length} {sortedEntries.length === 1 ? 'entry' : 'entries'} in

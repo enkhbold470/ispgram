@@ -52,9 +52,9 @@ export function EntryCard({
     <div
       className={cn(
         'group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-all hover:shadow-lg',
-        rank === 1 && 'border-yellow-400 ring-2 ring-yellow-400',
-        rank === 2 && 'border-gray-400 ring-2 ring-gray-400',
-        rank === 3 && 'border-orange-400 ring-2 ring-orange-400'
+        rank === 1 && 'border-[var(--rank-gold)] ring-2 ring-[var(--rank-gold)]',
+        rank === 2 && 'border-[var(--rank-silver)] ring-2 ring-[var(--rank-silver)]',
+        rank === 3 && 'border-[var(--rank-bronze)] ring-2 ring-[var(--rank-bronze)]'
       )}
     >
       {rank && rank <= 3 && (

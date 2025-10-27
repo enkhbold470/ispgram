@@ -50,9 +50,9 @@ export function MobileNav() {
       aria-label="Mobile navigation"
     >
       {/* Backdrop blur with gradient border */}
-      <div className="relative border-t border-orange-100 bg-white/80 backdrop-blur-xl">
+      <div className="relative border-t border-theme-accent-border bg-white/80 backdrop-blur-xl">
         {/* Gradient accent line */}
-        <div className="absolute left-0 right-0 top-0 h-[2px] bg-linear-to-r from-orange-500 via-purple-500 to-orange-500" />
+        <div className="absolute left-0 right-0 top-0 h-[2px] bg-linear-to-r from-theme-accent via-theme-tertiary to-theme-accent" />
         
         {/* Safe area padding for notched devices */}
         <div className="pb-safe">
@@ -69,15 +69,15 @@ export function MobileNav() {
                   className={cn(
                     "group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all duration-300 active:scale-95",
                     active
-                      ? "text-orange-600"
-                      : "text-gray-600 hover:text-orange-500"
+                      ? "text-theme-accent"
+                      : "text-gray-600 hover:text-theme-accent-hover"
                   )}
                   aria-label={item.label}
                   aria-current={active ? "page" : undefined}
                 >
                   {/* Active indicator bubble */}
                   {active && (
-                    <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-100 to-purple-50 opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-theme-accent-light to-theme-tertiary-light opacity-100 transition-opacity" />
                   )}
 
                   {/* Icon with scale animation */}
@@ -103,7 +103,7 @@ export function MobileNav() {
 
                   {/* Active dot indicator (modern minimal style) */}
                   {active && (
-                    <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-orange-600" />
+                    <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-theme-accent" />
                   )}
                 </Link>
               );
@@ -116,14 +116,14 @@ export function MobileNav() {
                 className={cn(
                   "group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all duration-300 active:scale-95",
                   pathname === "/profile"
-                    ? "text-orange-600"
-                    : "text-gray-600 hover:text-orange-500"
+                    ? "text-theme-accent"
+                    : "text-gray-600 hover:text-theme-accent-hover"
                 )}
                 aria-label="Profile"
                 aria-current={pathname === "/profile" ? "page" : undefined}
               >
                 {pathname === "/profile" && (
-                  <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-100 to-purple-50 opacity-100" />
+                  <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-theme-accent-light to-theme-tertiary-light opacity-100" />
                 )}
                 
                 <div className="relative z-10">
@@ -148,7 +148,7 @@ export function MobileNav() {
                 </span>
                 
                 {pathname === "/profile" && (
-                  <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-orange-600" />
+                  <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-theme-accent" />
                 )}
               </Link>
             </SignedIn>
@@ -156,7 +156,7 @@ export function MobileNav() {
             <SignedOut>
               <button
                 onClick={() => openSignIn()}
-                className="group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 text-gray-600 transition-all duration-300 hover:text-orange-500 active:scale-95"
+                className="group relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 text-gray-600 transition-all duration-300 hover:text-theme-accent-hover active:scale-95"
                 aria-label="Sign in"
               >
                 <div className="relative z-10">

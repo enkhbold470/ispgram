@@ -11,7 +11,7 @@ export function EditProfileButton() {
       <DialogTrigger asChild>
         <Button
           variant="default"
-          className="gap-2 bg-gradient-to-r from-orange-600 to-orange-700 text-white hover:from-orange-700 hover:to-orange-800"
+          className="gap-2 bg-gradient-to-r from-theme-accent to-theme-accent-hover text-white hover:from-theme-accent-hover hover:to-theme-secondary"
         >
           <Edit className="h-4 w-4" />
           Edit Profile
@@ -31,10 +31,10 @@ export function EditProfileButton() {
               profileSectionTitle: "text-gray-900 font-semibold",
               profileSectionContent: "space-y-4",
               formButtonPrimary:
-                "bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800",
-              formButtonReset: "text-orange-600 hover:text-orange-700",
-              badge: "bg-orange-100 text-orange-800",
-              alertRoot: "border-orange-200 bg-orange-50",
+                "bg-gradient-to-r from-theme-accent to-theme-accent-hover hover:from-theme-accent-hover hover:to-theme-secondary",
+              formButtonReset: "text-theme-accent hover:text-theme-accent-hover",
+              badge: "bg-theme-accent-light text-theme-accent-hover",
+              alertRoot: "border-theme-accent-muted bg-theme-accent-light",
             },
           }}
         />
