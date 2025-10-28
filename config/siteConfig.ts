@@ -9,7 +9,7 @@ export const siteConfig = {
 
   // Navigation
   navigation: [
-    { href: '/submit', label: 'Submit' },
+    { href: '/submit', label: 'Submission' },
     { href: '/vote', label: 'Vote' },
     { href: '/results', label: 'Results' },
   ],

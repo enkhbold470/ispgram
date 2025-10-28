@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Trophy, RefreshCw, Loader2, AlertCircle } from 'lucide-react'
 import { Leaderboard } from '@/components/leaderboard'
 import { useEntries } from '@/hooks/use-entries'
@@ -102,9 +103,10 @@ export default function ResultsPage() {
                 )
               }
               return (
-                <div
+                <Link
                   key={entry.id}
-                  className={`flex flex-col items-center justify-end rounded-lg border-2 bg-white text-center shadow-sm transition-all duration-200 ${borders[olympicIdx]} ${cardClasses[olympicIdx]}`}
+                  href={`/post/${entry.id}`}
+                  className={`flex flex-col items-center justify-end rounded-lg border-2 bg-white text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer ${borders[olympicIdx]} ${cardClasses[olympicIdx]}`}
                 >
                   <div className={`mb-2 ${iconSizes[olympicIdx]}`}>{medals[olympicIdx]}</div>
                   <h3 className={`mb-1 font-bold text-gray-900 ${nameSizes[olympicIdx]}`}>{entry.student.name}</h3>
@@ -112,7 +114,7 @@ export default function ResultsPage() {
                   <p className={`text-sm text-gray-600`}>
                     {entry.voteCount === 1 ? 'like' : 'likes'}
                   </p>
-                </div>
+                </Link>
               )
             })}
           </div>
