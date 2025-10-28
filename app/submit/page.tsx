@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useUser, useClerk } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,11 @@ const MAX_FILE_SIZE_MB = 5
 export default function SubmitPage() {
   const { user, isLoaded } = useUser()
   const router = useRouter()
-
+  const clerk = useClerk()
+  const { user: clerkUser } = clerk
+  const imageUrl = clerkUser?.imageUrl
+  const imageParams = new URLSearchParams()
+  const imageSrc = imageUrl ? `${imageUrl}?${imageParams.toString()}` : undefined
   const [studentId, setStudentId] = useState('')
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
@@ -328,17 +332,23 @@ export default function SubmitPage() {
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           {/* Header - Instagram style */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-linear-to-r from-theme-primary to-theme-secondary flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
-                  {user?.firstName?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || 'U'}
-                </span>
+            <div className="flex items-center gap-1">
+              
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-border bg-muted flex items-center justify-center relative">
+                <Image
+                  src={imageSrc || ''}
+                  alt={clerkUser?.fullName || clerkUser?.firstName || 'Your Entry'}
+                  height={48}
+                  width={48}
+                  className="object-cover w-full h-full"
+                />
               </div>
+
               <div>
                 <p className="font-semibold text-sm text-gray-900">
-                  {user?.fullName || user?.firstName || 'Your Entry'}
+                  {clerkUser?.fullName || clerkUser?.firstName || 'Your Entry'}
                 </p>
-                <p className="text-xs text-gray-500">Education Week Highlight 🎓</p>
+
               </div>
             </div>
             <button

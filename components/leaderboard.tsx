@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { Trophy } from 'lucide-react'
 
 interface LeaderboardEntry {
@@ -51,12 +52,25 @@ export function Leaderboard({ entries }: LeaderboardProps) {
         const { emoji, color } = getRankDisplay(rank)
 
         return (
-          <div
+          <Link
             key={entry.id}
-            className={`flex items-center gap-4 rounded-lg border p-4 transition-all hover:shadow-md ${color}`}
+            href={`/post/${entry.id}`}
+            className={`flex items-center gap-4 rounded-lg border p-4 transition-all hover:shadow-md hover:scale-[1.01] cursor-pointer ${color}`}
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 bg-white font-bold">
               <span className="text-xl">{emoji}</span>
+            </div>
+
+
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <h3 className="font-semibold text-gray-900 line-clamp-1">
+                {entry.student.name}
+              </h3>
+              {entry.description && (
+                <p className="text-sm text-gray-600 line-clamp-2">
+                  {entry.description}
+                </p>
+              )}
             </div>
 
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
@@ -69,17 +83,6 @@ export function Leaderboard({ entries }: LeaderboardProps) {
               />
             </div>
 
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 truncate">
-                {entry.student.name}
-              </h3>
-              {entry.description && (
-                <p className="text-sm text-gray-600 line-clamp-1">
-                  {entry.description}
-                </p>
-              )}
-            </div>
-
             <div className="flex flex-col items-end">
               <span className="text-2xl font-bold text-gray-900">
                 {entry.voteCount}
@@ -88,7 +91,7 @@ export function Leaderboard({ entries }: LeaderboardProps) {
                 {entry.voteCount === 1 ? 'like' : 'likes'}
               </span>
             </div>
-          </div>
+          </Link>
         )
       })}
     </div>
