@@ -6,9 +6,16 @@ import { MobileNav } from "@/components/mobile-nav";
 import { siteConfig } from "@/config/siteConfig";
 import "./globals.css";
 
+// To add Open Graph image using opengraph.jpeg in Next.js App Router:
+// 1. Place your opengraph.jpeg at the top level of the /app directory, e.g. /app/opengraph.jpeg
+// Next.js will automatically detect this and add the correct <meta property="og:image" ... />
+// For more custom options use opengraph-image.tsx, but for a static jpeg, simply adding the file is enough.
+
 export const metadata: Metadata = {
   title: siteConfig.title,
   description: siteConfig.description,
+  // You do NOT need to manually add opengraph image here if you have /app/opengraph.jpeg
+  // Next.js will extract it and set og:image meta tag automatically.
 };
 
 export default function RootLayout({
