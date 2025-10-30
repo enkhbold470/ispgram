@@ -76,11 +76,6 @@ export default function PostPage() {
       return
     }
 
-    if (!student) {
-      alert('Please submit an entry first to vote')
-      return
-    }
-
     if (!entry || voting) return
 
     setVoting(true)
@@ -93,8 +88,8 @@ export default function PostPage() {
       ...entry,
       voteCount: wasVoted ? entry.voteCount - 1 : entry.voteCount + 1,
       votes: wasVoted
-        ? entry.votes.filter((v) => v.studentId !== student.id)
-        : [...entry.votes, { id: 'temp', studentId: student.id }],
+        ? entry.votes.filter((v) => v.studentId !== student?.id)
+        : [...entry.votes, { id: 'temp', studentId: student?.id || '' }],
     })
 
     try {
