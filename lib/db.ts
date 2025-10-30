@@ -10,7 +10,7 @@ interface EntryWithRelations {
   student: {
     id: string
     name: string
-    studentId: string
+    studentId: string | null
   }
   votes: {
     id: string
@@ -20,7 +20,7 @@ interface EntryWithRelations {
 
 export async function getOrCreateStudent(
   clerkId: string,
-  studentId: string,
+  studentId: string | null,
   name: string,
   email: string
 ) {
