@@ -118,26 +118,6 @@ export default function LikesPage() {
     )
   }
 
-  if (!currentStudent) {
-    return (
-      <div className="mx-auto max-w-2xl">
-        <div className="rounded-lg border bg-white p-8 shadow-lg text-center">
-          <Heart className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-          <h2 className="mb-2 text-2xl font-bold text-gray-900">Welcome to Liking!</h2>
-          <p className="mb-6 text-gray-600">
-            To like entries, you&apos;ll need to share your own Education Week highlight first.
-          </p>
-          <button
-            onClick={() => router.push('/submit')}
-            className="rounded-full bg-theme-primary px-8 py-3 font-semibold text-white transition-colors hover:bg-theme-primary-hover"
-          >
-            Share Your Entry
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   if (sortedEntries.length === 0) {
     return (
       <div className="mx-auto max-w-2xl">
@@ -207,7 +187,7 @@ export default function LikesPage() {
             <EntryCard
               key={entry.id}
               entry={entry}
-              currentStudentId={currentStudent.id}
+              currentStudentId={currentStudent?.id || ''}
               onVote={handleLike}
               showVoteButton={true}
             />
