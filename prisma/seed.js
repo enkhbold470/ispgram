@@ -1,8 +1,8 @@
 // Seed script for Prisma using placekeanu.com/500 images
 // Run with: pnpm prisma db seed (after configuring package.json prisma.seed)
 
-const { PrismaClient } = require('@prisma/client')
-const { randomUUID } = require('crypto')
+import { PrismaClient } from '@prisma/client'
+import { randomUUID } from 'crypto'
 const prisma = new PrismaClient()
 
 async function main() {

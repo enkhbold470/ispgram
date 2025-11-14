@@ -224,6 +224,16 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Global cursor pointer for interactive elements */
+  button:not(:disabled),
+  a,
+  [role="button"]:not([aria-disabled="true"]),
+  input[type="submit"]:not(:disabled),
+  input[type="button"]:not(:disabled),
+  input[type="reset"]:not(:disabled) {
+    cursor: pointer;
+  }
 
   /* Screen reader only - for accessibility */
   .sr-only {

@@ -150,7 +150,7 @@ export async function checkNSFW(imageBuffer: Buffer): Promise<NSFWResult> {
     ctx.drawImage(img, 0, 0)
     
     // Run prediction
-    const predictions = await model.classify(canvas as any)
+    const predictions = await model.classify(canvas as unknown as HTMLCanvasElement)
     predictions.sort((a, b) => b.probability - a.probability)
 
     const topPrediction = predictions[0]

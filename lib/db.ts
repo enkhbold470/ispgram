@@ -42,9 +42,9 @@ export async function getOrCreateStudent(
   return prisma.student.create({
     data: {
       clerkId,
-      studentId,
       name,
       email,
+      studentId: (studentId ?? null) as string,
     },
   })
 }
@@ -114,4 +114,143 @@ export async function getEntryById(id: string) {
     ...entry,
     voteCount: entry.votes.length,
   }
+}
+
+export interface StudentEmailInfo {
+  email: string
+  name: string
+  hasEntry: boolean
+  voteCount: number
+}
+
+export async function getStudentsForEmailList(
+  filter: 'all' | 'with-entry' | 'without-entry' | 'top-likes'
+): Promise<StudentEmailInfo[]> {
+  const baseSelect = {
+    email: true,
+    name: true,
+    entry: {
+      select: {
+        votes: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    },
+  }
+
+  switch (filter) {
+    case 'all': {
+      const students = await prisma.student.findMany({
+        select: baseSelect,
+      })
+      return students.map((student) => ({
+        email: student.email,
+        name: student.name,
+        hasEntry: !!student.entry,
+        voteCount: student.entry?.votes.length || 0,
+      }))
+    }
+
+    case 'with-entry': {
+      const students = await prisma.student.findMany({
+        where: {
+          entry: {
+            isNot: null,
+          },
+        },
+        select: baseSelect,
+      })
+      return students.map((student) => ({
+        email: student.email,
+        name: student.name,
+        hasEntry: true,
+        voteCount: student.entry?.votes.length || 0,
+      }))
+    }
+
+    case 'without-entry': {
+      const students = await prisma.student.findMany({
+        where: {
+          entry: null,
+        },
+        select: {
+          email: true,
+          name: true,
+        },
+      })
+      return students.map((student) => ({
+        email: student.email,
+        name: student.name,
+        hasEntry: false,
+        voteCount: 0,
+      }))
+    }
+
+    case 'top-likes': {
+      const entries = await prisma.entry.findMany({
+        select: {
+          student: {
+            select: {
+              email: true,
+              name: true,
+            },
+          },
+          votes: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      })
+
+      return entries
+        .filter((entry) => entry.votes.length >= 10)
+        .map((entry) => ({
+          email: entry.student.email,
+          name: entry.student.name,
+          hasEntry: true,
+          voteCount: entry.votes.length,
+        }))
+    }
+
+    default:
+      return []
+  }
+}
+
+export interface StudentNotificationInfo {
+  email: string
+  name: string
+  entryId: string | null
+  voteCount: number
+  hasEntry: boolean
+}
+
+export async function getStudentsForDailyNotification(): Promise<StudentNotificationInfo[]> {
+  const students = await prisma.student.findMany({
+    select: {
+      email: true,
+      name: true,
+      entry: {
+        select: {
+          id: true,
+          votes: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  return students.map((student) => ({
+    email: student.email,
+    name: student.name,
+    entryId: student.entry?.id || null,
+    voteCount: student.entry?.votes.length || 0,
+    hasEntry: !!student.entry,
+  }))
 }
