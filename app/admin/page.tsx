@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '@clerk/nextjs'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
+import { isAdminEmail } from '@/lib/admin'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -21,6 +22,7 @@ interface Student {
 
 export default function AdminPage() {
   const { isSignedIn, isLoaded } = useAuth()
+  const { user } = useUser()
   const router = useRouter()
   const [filterType, setFilterType] = useState<'all' | 'with-entry' | 'without-entry' | 'top-likes'>('all')
   const [students, setStudents] = useState<Student[]>([])
@@ -34,8 +36,17 @@ export default function AdminPage() {
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push('/sign-in')
+      return
     }
-  }, [isLoaded, isSignedIn, router])
+
+    if (isLoaded && isSignedIn && user) {
+      const userEmail = user.primaryEmailAddress?.emailAddress || user.emailAddresses[0]?.emailAddress
+      if (!isAdminEmail(userEmail)) {
+        router.push('/')
+        return
+      }
+    }
+  }, [isLoaded, isSignedIn, user, router])
 
   const fetchEmailList = useCallback(async () => {
     setLoading(true)
@@ -167,6 +178,18 @@ export default function AdminPage() {
 
   if (!isSignedIn) {
     return null
+  }
+
+  const userEmail = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses[0]?.emailAddress
+  if (!isAdminEmail(userEmail)) {
+    return (
+      <div className="max-w-6xl mx-auto flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">You don&apos;t have permission to access this page.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
