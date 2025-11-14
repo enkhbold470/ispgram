@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs'
+// import * as tf from '@tensorflow/tfjs'
 import * as nsfwjs from 'nsfwjs'
 import { createCanvas, loadImage } from 'canvas'
 
@@ -33,7 +33,7 @@ export async function checkNSFW(imageBuffer: Buffer) {
     ctx.drawImage(img, 0, 0)
     
     // Run prediction directly on canvas
-    const predictions = await nsfwModel.classify(canvas as any)
+    const predictions = await nsfwModel.classify(canvas as unknown as HTMLCanvasElement)
 
     // Sort predictions by probability (highest first)
     predictions.sort((a, b) => b.probability - a.probability)
