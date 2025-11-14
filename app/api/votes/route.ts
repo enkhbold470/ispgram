@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { getStudentByClerkId } from '@/lib/db'
 import { NextResponse } from 'next/server'
+import { currentUser } from '@clerk/nextjs/server'
 
 export async function POST(request: Request) {
   try {
@@ -17,13 +17,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Entry ID is required' }, { status: 400 })
     }
 
-    // Get student record
-    const student = await getStudentByClerkId(userId)
+    // Get or create student record
+    let student = await prisma.student.findUnique({
+      where: { clerkId: userId },
+    })
+
+    // If student doesn't exist, create a basic record for voting
     if (!student) {
-      return NextResponse.json(
-        { error: 'Student not found. Please submit an entry first.' },
-        { status: 404 }
-      )
+      const user = await currentUser()
+      const email = user?.emailAddresses[0]?.emailAddress || ''
+      const name = user?.fullName || user?.firstName || 'Anonymous'
+      
+      student = await prisma.student.create({
+        data: {
+          clerkId: userId,
+          studentId: null,
+          name,
+          email,
+        },
+      })
     }
 
     // Check if vote already exists
