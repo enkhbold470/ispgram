@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Trophy, RefreshCw, Loader2, AlertCircle } from 'lucide-react'
 import { Leaderboard } from '@/components/leaderboard'
 import { useEntries } from '@/hooks/use-entries'
+import { ResultsSkeleton } from '@/components/skeletons/results-skeleton'
 
 export default function ResultsPage() {
   const { entries, loading, error, refetch } = useEntries()
@@ -17,12 +18,7 @@ export default function ResultsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-theme-primary" />
-        <p className="text-gray-600">Loading results...</p>
-      </div>
-    )
+    return <ResultsSkeleton />
   }
 
   if (error) {

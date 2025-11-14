@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { User } from "lucide-react";
 import { fontVariables } from "@/lib/fonts";
 import { MobileNav } from "@/components/mobile-nav";
 import { siteConfig } from "@/config/siteConfig";
@@ -66,7 +67,16 @@ export default function RootLayout({
                 ))}
 
                 <SignedIn>
-                  <UserButton afterSignOutUrl="/" />
+                  <div className="flex items-center gap-4">
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors hover:text-theme-primary"
+                    >
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Link>
+                    {/* <UserButton afterSignOutUrl="/" /> */}
+                  </div>
                 </SignedIn>
                 <SignedOut>
                   <SignInButton mode="modal">

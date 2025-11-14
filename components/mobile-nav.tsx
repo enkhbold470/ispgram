@@ -15,28 +15,23 @@ interface NavItem {
 }
 
 // Build navigation items from siteConfig
-const navItems: NavItem[] = [
-  {
-    href: "/",
-    label: "Home",
-    icon: Home,
-    activePattern: /^\/$/,
-  },
-  ...siteConfig.navigation.map((item) => {
-    // Get the icon from the corresponding feature or hero button
-    const featureMatch = siteConfig.features.find(f => 
-      item.href.includes(f.title.toLowerCase().split(' ')[0].toLowerCase())
-    );
-    const buttonMatch = siteConfig.hero.ctaButtons.find(b => b.href === item.href);
-    
-    return {
-      href: item.href,
-      label: item.label,
-      icon: buttonMatch?.icon || featureMatch?.icon || Home,
-      activePattern: new RegExp(`^${item.href}`),
-    };
-  }),
-];
+const navItems: NavItem[] = siteConfig.navigation.map((item) => {
+  // Get the icon from the corresponding feature or hero button
+  const featureMatch = siteConfig.features.find(f => 
+    item.href.includes(f.title.toLowerCase().split(' ')[0].toLowerCase())
+  );
+  const buttonMatch = siteConfig.hero.ctaButtons.find(b => b.href === item.href);
+  
+  // For mobile view, rename Vote to Home
+  const label = item.href === '/vote' ? 'Home' : item.label;
+  
+  return {
+    href: item.href,
+    label,
+    icon: buttonMatch?.icon || featureMatch?.icon || Home,
+    activePattern: new RegExp(`^${item.href}`),
+  };
+});
 
 export function MobileNav() {
   const pathname = usePathname();

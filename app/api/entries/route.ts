@@ -1,12 +1,59 @@
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { getEntriesWithVotes, getOrCreateStudent } from '@/lib/db'
+import { getOrCreateStudent } from '@/lib/db'
 import { NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const entries = await getEntriesWithVotes()
-    return NextResponse.json(entries)
+    const { searchParams } = new URL(request.url)
+    const cursor = searchParams.get('cursor')
+    const limit = parseInt(searchParams.get('limit') || '12', 10)
+    const sortBy = searchParams.get('sortBy') || 'createdAt'
+
+    const entries = await prisma.entry.findMany({
+      take: limit + 1, // Fetch one extra to check if there are more
+      ...(cursor && {
+        skip: 1,
+        cursor: {
+          id: cursor,
+        },
+      }),
+      include: {
+        student: {
+          select: {
+            id: true,
+            name: true,
+            studentId: true,
+          },
+        },
+        votes: {
+          select: {
+            id: true,
+            studentId: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    const hasMore = entries.length > limit
+    let data = entries.slice(0, limit).map((entry) => ({
+      ...entry,
+      voteCount: entry.votes.length,
+    }))
+
+    // Sort by votes if requested (after fetching since Prisma doesn't support count sorting easily)
+    if (sortBy === 'votes') {
+      data = data.sort((a, b) => b.voteCount - a.voteCount)
+    }
+
+    return NextResponse.json({
+      entries: data,
+      nextCursor: hasMore ? entries[limit - 1].id : null,
+      hasMore,
+    })
   } catch (error) {
     console.error('Error fetching entries:', error)
     return NextResponse.json({ error: 'Failed to fetch entries' }, { status: 500 })

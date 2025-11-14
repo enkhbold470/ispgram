@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import Link from 'next/link'
 import { Upload, Loader2, CheckCircle, AlertCircle, Trash2, Heart, Eye } from 'lucide-react'
 import Image from 'next/image'
+import { SubmitSkeleton } from '@/components/skeletons/submit-skeleton'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
 const MAX_FILE_SIZE_MB = 5
@@ -27,6 +28,7 @@ export default function SubmitPage() {
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [checkingEntry, setCheckingEntry] = useState(true)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [existingEntry, setExistingEntry] = useState<{
@@ -51,6 +53,7 @@ export default function SubmitPage() {
     // Check if user already has an entry and fetch like info too
     async function checkExistingEntry() {
       try {
+        setCheckingEntry(true)
         const response = await fetch('/api/student')
         if (response.ok) {
           const student = await response.json()
@@ -79,6 +82,8 @@ export default function SubmitPage() {
         }
       } catch (err) {
         console.error('Error checking entry:', err)
+      } finally {
+        setCheckingEntry(false)
       }
     }
 
@@ -260,12 +265,8 @@ export default function SubmitPage() {
   // Only allow photo upload on new entries, not on edit
   const showPhotoUpload = !existingEntry
 
-  if (!isLoaded) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-theme-accent" />
-      </div>
-    )
+  if (!isLoaded || checkingEntry) {
+    return <SubmitSkeleton />
   }
 
   if (!user) {

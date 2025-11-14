@@ -124,7 +124,8 @@ export interface StudentEmailInfo {
 }
 
 export async function getStudentsForEmailList(
-  filter: 'all' | 'with-entry' | 'without-entry' | 'top-likes'
+  filter: 'all' | 'with-entry' | 'without-entry' | 'top-likes',
+  subscribedOnly: boolean = true
 ): Promise<StudentEmailInfo[]> {
   const baseSelect = {
     email: true,
@@ -143,6 +144,11 @@ export async function getStudentsForEmailList(
   switch (filter) {
     case 'all': {
       const students = await prisma.student.findMany({
+        where: subscribedOnly
+          ? {
+              emailSubscribed: true,
+            }
+          : undefined,
         select: baseSelect,
       })
       return students.map((student) => ({
@@ -159,6 +165,7 @@ export async function getStudentsForEmailList(
           entry: {
             isNot: null,
           },
+          ...(subscribedOnly && { emailSubscribed: true }),
         },
         select: baseSelect,
       })
@@ -174,6 +181,7 @@ export async function getStudentsForEmailList(
       const students = await prisma.student.findMany({
         where: {
           entry: null,
+          ...(subscribedOnly && { emailSubscribed: true }),
         },
         select: {
           email: true,
@@ -190,6 +198,13 @@ export async function getStudentsForEmailList(
 
     case 'top-likes': {
       const entries = await prisma.entry.findMany({
+        where: subscribedOnly
+          ? {
+              student: {
+                emailSubscribed: true,
+              },
+            }
+          : undefined,
         select: {
           student: {
             select: {
@@ -230,6 +245,9 @@ export interface StudentNotificationInfo {
 
 export async function getStudentsForDailyNotification(): Promise<StudentNotificationInfo[]> {
   const students = await prisma.student.findMany({
+    where: {
+      emailSubscribed: true, // Only subscribed users
+    },
     select: {
       email: true,
       name: true,

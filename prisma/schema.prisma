@@ -9,12 +9,13 @@ datasource db {
 
 // Student who shares an Education Week entry
 model Student {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique // Clerk user ID
-  studentId String?  @unique // De Anza student ID (optional for voting, required for entry submission)
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id              String   @id @default(cuid())
+  clerkId         String   @unique // Clerk user ID
+  studentId       String?  @unique // De Anza student ID (optional for voting, required for entry submission)
+  name            String
+  email           String   @unique
+  emailSubscribed Boolean  @default(true) // Email subscription preference
+  createdAt       DateTime @default(now())
   
   // Relations
   entry     Entry?   // One student can submit one entry
@@ -22,6 +23,7 @@ model Student {
   
   @@index([studentId])
   @@index([clerkId])
+  @@index([emailSubscribed])
   @@map("students")
 }
 

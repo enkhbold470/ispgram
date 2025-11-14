@@ -4,6 +4,21 @@ import nodemailer from 'nodemailer'
 import { prisma } from '@/lib/prisma'
 import { getStudentsForDailyNotification } from '@/lib/db'
 import { isAdminEmail } from '@/lib/admin'
+import crypto from 'crypto'
+
+// Generate unsubscribe token
+function generateUnsubscribeToken(email: string): string {
+  const secret = process.env.UNSUBSCRIBE_SECRET || 'default-secret-change-in-production'
+  const hash = crypto.createHmac('sha256', secret).update(email).digest('hex')
+  return Buffer.from(`${email}:${hash}`).toString('base64')
+}
+
+// Generate unsubscribe link
+function generateUnsubscribeLink(email: string): string {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const token = generateUnsubscribeToken(email)
+  return `${appUrl}/unsubscribe?token=${encodeURIComponent(token)}`
+}
 
 // Create Zoho transporter
 const createTransporter = () => {
@@ -70,6 +85,17 @@ export async function POST(request: Request) {
 
       for (const student of allStudents) {
         try {
+          // Check if student is subscribed (already filtered in getStudentsForDailyNotification, but double-check)
+          const studentRecord = await prisma.student.findUnique({
+            where: { email: student.email },
+            select: { emailSubscribed: true },
+          })
+
+          if (!studentRecord || !studentRecord.emailSubscribed) {
+            console.log(`Skipping unsubscribed student: ${student.email}`)
+            continue
+          }
+
           let emailBody = ''
           
           if (student.hasEntry && student.voteCount > 0) {
@@ -82,6 +108,8 @@ export async function POST(request: Request) {
             emailBody = `Ready to share your adventure? Submit your photo: ${appUrl}/submit\n\nSee what others shared: ${appUrl}/vote`
           }
 
+          const unsubscribeLink = generateUnsubscribeLink(student.email)
+
           await transporter.sendMail({
             from: `"ISPgram Team" <${fromEmail}>`,
             to: student.email,
@@ -90,7 +118,11 @@ export async function POST(request: Request) {
               Hello ${student.name},<br><br>
               ${emailBody.replace(/\n/g, '<br>')}<br><br>
               Best regards,<br>
-              ISPgram Team
+              ISPgram Team<br><br>
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+              <p style="font-size: 12px; color: #6b7280;">
+                <a href="${unsubscribeLink}" style="color: #6b7280; text-decoration: underline;">Unsubscribe from email notifications</a>
+              </p>
             `,
           })
           
@@ -129,6 +161,7 @@ export async function POST(request: Request) {
           email: {
             in: emails,
           },
+          emailSubscribed: true, // Only subscribed users
         },
         select: { email: true, name: true },
       })
@@ -139,6 +172,9 @@ export async function POST(request: Request) {
       switch (type) {
         case 'all':
           students = await prisma.student.findMany({
+            where: {
+              emailSubscribed: true, // Only subscribed users
+            },
             select: { email: true, name: true },
           })
           console.log(`[POST /api/emails/send] "all" students found: ${students.length}`)
@@ -150,6 +186,7 @@ export async function POST(request: Request) {
               entry: {
                 isNot: null,
               },
+              emailSubscribed: true, // Only subscribed users
             },
             select: { email: true, name: true },
           })
@@ -160,6 +197,7 @@ export async function POST(request: Request) {
           students = await prisma.student.findMany({
             where: {
               entry: null,
+              emailSubscribed: true, // Only subscribed users
             },
             select: { email: true, name: true },
           })
@@ -170,7 +208,7 @@ export async function POST(request: Request) {
           const entriesWithVotes = await prisma.entry.findMany({
             include: {
               student: {
-                select: { email: true, name: true },
+                select: { email: true, name: true, emailSubscribed: true },
               },
               votes: true,
             },
@@ -178,8 +216,11 @@ export async function POST(request: Request) {
           console.log(`[POST /api/emails/send] Entries fetched for "top-likes": ${entriesWithVotes.length}`)
 
           students = entriesWithVotes
-            .filter((entry) => entry.votes.length >= 10)
-            .map((entry) => entry.student)
+            .filter((entry) => entry.votes.length >= 10 && entry.student?.emailSubscribed)
+            .map((entry) => ({
+              email: entry.student!.email,
+              name: entry.student!.name,
+            }))
             .filter((student): student is { email: string; name: string } => student !== null)
           console.log(`[POST /api/emails/send] "top-likes" students filtered: ${students.length}`)
           break
@@ -213,6 +254,8 @@ export async function POST(request: Request) {
       try {
         console.log(`[POST /api/emails/send] Sending email to: ${student.email} (${student.name})`)
         
+        const unsubscribeLink = generateUnsubscribeLink(student.email)
+        
         await transporter.sendMail({
           from: `"ISPgram Team" <${fromEmail}>`,
           to: student.email,
@@ -221,7 +264,11 @@ export async function POST(request: Request) {
             Hello ${student.name},<br><br>
             ${emailBody.replace(/\n/g, '<br>')}<br><br>
             Best regards,<br>
-            ISPgram Team
+            ISPgram Team<br><br>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+            <p style="font-size: 12px; color: #6b7280;">
+              <a href="${unsubscribeLink}" style="color: #6b7280; text-decoration: underline;">Unsubscribe from email notifications</a>
+            </p>
           `,
         })
         
