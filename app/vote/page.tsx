@@ -75,8 +75,8 @@ export default function LikesPage() {
         throw new Error(error.error || 'Failed to like')
       }
 
-      // Like counts are updated optimistically by VoteButton component
-      // No need to refetch here
+      // Refetch entries to update vote states
+      await refetch()
     } catch (err) {
       console.error('Like error:', err)
       alert(err instanceof Error ? err.message : 'Failed to like. Please try again.')
