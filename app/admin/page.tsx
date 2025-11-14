@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Mail, Send, Users, Heart, CheckSquare, Square, Bell } from 'lucide-react'
+import { Mail, Send, Users, Heart, CheckSquare, Square, Bell, MailCheck } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Student {
@@ -25,6 +25,7 @@ export default function AdminPage() {
   const { user } = useUser()
   const router = useRouter()
   const [filterType, setFilterType] = useState<'all' | 'with-entry' | 'without-entry' | 'top-likes'>('all')
+  const [subscribedOnly, setSubscribedOnly] = useState(true)
   const [students, setStudents] = useState<Student[]>([])
   const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(false)
@@ -51,7 +52,7 @@ export default function AdminPage() {
   const fetchEmailList = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/emails/list?type=${filterType}`)
+      const response = await fetch(`/api/emails/list?type=${filterType}&subscribedOnly=${subscribedOnly}`)
       const data = await response.json()
 
       if (!response.ok) {
@@ -65,7 +66,7 @@ export default function AdminPage() {
     } finally {
       setLoading(false)
     }
-  }, [filterType])
+  }, [filterType, subscribedOnly])
 
   const toggleSelectAll = () => {
     if (selectedEmails.size === students.length) {
@@ -262,6 +263,32 @@ export default function AdminPage() {
           Top Liked
         </Button>
       </div>
+
+      {/* Subscription Filter Toggle */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <MailCheck className="h-5 w-5 text-theme-primary" />
+              <div>
+                <Label htmlFor="subscribed-only" className="text-base font-medium cursor-pointer">
+                  Subscribed Users Only
+                </Label>
+                <p className="text-sm text-gray-500">
+                  {subscribedOnly
+                    ? 'Showing only users who are subscribed to email notifications'
+                    : 'Showing all users including unsubscribed'}
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="subscribed-only"
+              checked={subscribedOnly}
+              onCheckedChange={setSubscribedOnly}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Email List */}

@@ -7,6 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import  SignOutButtonComponent  from "./sign-out-button";
 import { EditProfileButton } from "./edit-profile-button";
+import { EmailSubscriptionToggle } from "./email-subscription-toggle";
+import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -135,6 +137,15 @@ export default async function ProfilePage() {
                   <p className="text-sm text-gray-500">No email addresses found</p>
                 )}
               </div>
+            </div>
+
+            {/* Email Preferences */}
+            <div>
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900">
+                <Mail className="h-5 w-5 text-theme-accent" />
+                Email Preferences
+              </h3>
+              <EmailSubscriptionToggle />
             </div>
 
             {/* Account Information */}

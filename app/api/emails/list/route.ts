@@ -19,12 +19,13 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const type = (searchParams.get('type') || 'all') as 'all' | 'with-entry' | 'without-entry' | 'top-likes'
+    const subscribedOnly = searchParams.get('subscribedOnly') !== 'false' // Default to true
 
     if (!['all', 'with-entry', 'without-entry', 'top-likes'].includes(type)) {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
     }
 
-    const students = await getStudentsForEmailList(type)
+    const students = await getStudentsForEmailList(type, subscribedOnly)
 
     return NextResponse.json({ students })
   } catch (error) {
