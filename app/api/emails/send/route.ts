@@ -1,8 +1,9 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { prisma } from '@/lib/prisma'
 import { getStudentsForDailyNotification } from '@/lib/db'
+import { isAdminEmail } from '@/lib/admin'
 
 // Create Zoho transporter
 const createTransporter = () => {
@@ -30,6 +31,14 @@ export async function POST(request: Request) {
     if (!userId) {
       console.log('[POST /api/emails/send] Unauthorized: no userId')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check admin access
+    const user = await currentUser()
+    const userEmail = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses[0]?.emailAddress
+    if (!isAdminEmail(userEmail)) {
+      console.log('[POST /api/emails/send] Forbidden: not admin email')
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { emails, type, subject, body, dailyNotification } = await request.json()
