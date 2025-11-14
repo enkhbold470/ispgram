@@ -11,7 +11,7 @@ datasource db {
 model Student {
   id        String   @id @default(cuid())
   clerkId   String   @unique // Clerk user ID
-  studentId String   @unique // De Anza student ID (required)
+  studentId String?  @unique // De Anza student ID (optional for voting, required for entry submission)
   name      String
   email     String   @unique
   createdAt DateTime @default(now())
