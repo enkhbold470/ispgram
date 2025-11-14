@@ -42,9 +42,9 @@ export async function getOrCreateStudent(
   return prisma.student.create({
     data: {
       clerkId,
-      studentId: studentId || 'UNKNOWN',
       name,
       email,
+      studentId: (studentId ?? null) as string,
     },
   })
 }
