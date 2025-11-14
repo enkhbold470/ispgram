@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Mail, Send, Users, Heart, CheckSquare, Square, Bell, MailCheck } from 'lucide-react'
 import { toast } from 'sonner'
-
+import { Switch } from '@/components/ui/switch'
 interface Student {
   email: string
   name: string
