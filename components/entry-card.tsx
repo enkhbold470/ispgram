@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { VoteButton } from './vote-button'
 import { cn } from '@/lib/utils'
 
@@ -63,30 +64,36 @@ export function EntryCard({
         </div>
       )}
 
-      <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
-        <Image
-          src={entry.photoUrl || 'https://placekeanu.com/500'}
-          alt={`${entry.student.name}'s Education Week highlight`}
-          fill
-          className="object-cover transition-transform group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-      </div>
+      <Link href={`/post/${entry.id}`} className="block">
+        <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
+          <Image
+            src={entry.photoUrl || 'https://placekeanu.com/500'}
+            alt={`${entry.student.name}'s Education Week highlight`}
+            fill
+            className="object-cover transition-transform group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+      </Link>
 
       <div className="p-4">
-        <div className="mb-2 flex items-start justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-900">{entry.student.name}</h3>
-            {entry.description && (
-              <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                {entry.description}
-              </p>
-            )}
+        <Link href={`/post/${entry.id}`} className="block">
+          <div className="mb-2 flex items-start justify-between">
+            <div>
+              <h3 className="font-semibold text-gray-900 hover:text-theme-primary transition-colors">
+                {entry.student.name}
+              </h3>
+              {entry.description && (
+                <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                  {entry.description}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        </Link>
 
         {showVoteButton && (
-          <div className="mt-3 flex justify-center">
+          <div className="mt-3 flex justify-center" onClick={(e) => e.stopPropagation()}>
             <VoteButton
               entryId={entry.id}
               initialVoteCount={entry.voteCount}

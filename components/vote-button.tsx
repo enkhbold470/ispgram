@@ -1,7 +1,7 @@
 'use client'
 
 import { Heart } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
 interface VoteButtonProps {
@@ -22,6 +22,16 @@ export function VoteButton({
   const [voteCount, setVoteCount] = useState(initialVoteCount)
   const [voted, setVoted] = useState(hasVoted)
   const [loading, setLoading] = useState(false)
+
+  // Sync voted state with hasVoted prop
+  useEffect(() => {
+    setVoted(hasVoted)
+  }, [hasVoted])
+
+  // Sync voteCount with initialVoteCount prop
+  useEffect(() => {
+    setVoteCount(initialVoteCount)
+  }, [initialVoteCount])
 
   const handleClick = async () => {
     if (loading || disabled) return
