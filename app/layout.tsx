@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { User } from "lucide-react";
 import { fontVariables } from "@/lib/fonts";
@@ -7,31 +7,35 @@ import { MobileNav } from "@/components/mobile-nav";
 import { siteConfig } from "@/config/siteConfig";
 import "./globals.css";
 
-// Open Graph image configured:
-// - File: /app/opengraph-image.jpeg (Next.js auto-detects this)
-// - Explicitly configured in metadata below for OpenGraph and Twitter cards
-// - For dynamic images, use opengraph-image.tsx instead
+// Generate absolute URL for OpenGraph image
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const ogImageUrl = `${appUrl}/opengraph-image.jpeg`;
 
 export const metadata: Metadata = {
+  metadataBase: new URL(appUrl),
   title: siteConfig.title,
   description: siteConfig.description,
   openGraph: {
     title: siteConfig.title,
     description: siteConfig.description,
+    url: appUrl,
+    siteName: siteConfig.name,
     images: [
       {
-        url: '/opengraph-image.jpeg',
+        url: ogImageUrl,
         width: 1200,
         height: 630,
         alt: siteConfig.name,
       },
     ],
+    locale: 'en_US',
+    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: siteConfig.title,
     description: siteConfig.description,
-    images: ['/opengraph-image.jpeg'],
+    images: [ogImageUrl],
   },
 };
 
@@ -46,7 +50,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${fontVariables} font-sans antialiased bg-linear-to-br ${siteConfig.theme.bgGradient} min-h-screen`}
+          className={`${fontVariables} font-sans antialiased bg-gradient-to-br ${siteConfig.theme.bgGradient} min-h-screen`}
         >
           <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg md:block hidden">
             <div className="container mx-auto flex items-center justify-between px-4 py-4">
