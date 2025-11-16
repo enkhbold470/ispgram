@@ -9,6 +9,7 @@ import "./globals.css";
 
 // Generate absolute URL for OpenGraph image
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+// Use image from public folder to avoid Next.js auto-detection query parameters
 const ogImageUrl = `${appUrl}/opengraph-image.jpeg`;
 
 export const metadata: Metadata = {
