@@ -7,13 +7,12 @@ import { MobileNav } from "@/components/mobile-nav";
 import { siteConfig } from "@/config/siteConfig";
 import "./globals.css";
 
-// Generate absolute URL for OpenGraph image
+// Old school OpenGraph - simple and reliable
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-// Use image from public folder to avoid Next.js auto-detection query parameters
 const ogImageUrl = `${appUrl}/opengraph-image.jpeg`;
 
+// Simple metadata - old school style
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
   title: siteConfig.title,
   description: siteConfig.description,
   openGraph: {
@@ -21,16 +20,9 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     url: appUrl,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: ogImageUrl,
-        width: 1200,
-        height: 630,
-        alt: siteConfig.name,
-      },
-    ],
-    locale: 'en_US',
+    images: [ogImageUrl],
     type: 'website',
+    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
