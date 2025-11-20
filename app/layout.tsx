@@ -43,9 +43,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${fontVariables} font-sans antialiased bg-gradient-to-br ${siteConfig.theme.bgGradient} min-h-screen`}
+          className={`${fontVariables} font-sans antialiased min-h-screen`}
         >
-          <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg md:block hidden">
+          <nav className="sticky top-0 z-50 border-b md:block hidden">
             <div className="container mx-auto flex items-center justify-between px-4 py-4">
               <Link href="/" className="flex items-center gap-2 text-xl font-bold text-theme-primary hover:text-theme-primary-hover">
                 <LogoIcon className="h-6 w-6" />
