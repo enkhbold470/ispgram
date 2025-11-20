@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { Loader2, Heart, AlertCircle, RefreshCw, ArrowUpDown } from 'lucide-react'
+import { Heart, AlertCircle, RefreshCw, ArrowUpDown } from 'lucide-react'
 import { EntryCard } from '@/components/entry-card'
-import { useEntries } from '@/hooks/use-entries'
+import { useEntries, type Entry } from '@/hooks/use-entries'
 
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
@@ -15,9 +15,11 @@ export default function LikesPage() {
   const { user, isLoaded } = useUser()
   const router = useRouter()
   const [sortByLikes, setSortByLikes] = useState(false)
-  const { entries, loading, loadingMore, error, hasMore, loadMore, refetch } = useEntries({
+  const { entries: fetchedEntries, loading, error, refetch } = useEntries({
     sortBy: sortByLikes ? 'votes' : 'createdAt',
+    initialLimit: 100,
   })
+  const [entries, setEntries] = useState<Entry[]>([])
   const [currentStudent, setCurrentStudent] = useState<{
     id: string
     studentId: string
@@ -25,7 +27,11 @@ export default function LikesPage() {
   } | null>(null)
   const [liking, setLiking] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const observerTarget = useRef<HTMLDivElement>(null)
+
+  // Sync fetched entries to local state
+  useEffect(() => {
+    setEntries(fetchedEntries)
+  }, [fetchedEntries])
 
   // Sort entries based on the selected mode (only shuffle if not sorting by likes, since API handles that)
   const sortedEntries = useMemo(() => {
@@ -39,30 +45,6 @@ export default function LikesPage() {
       return entries
     }
   }, [entries, sortByLikes])
-
-
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && hasMore && !loadingMore && !loading) {
-          loadMore()
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    const currentTarget = observerTarget.current
-    if (currentTarget) {
-      observer.observe(currentTarget)
-    }
-
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget)
-      }
-    }
-  }, [hasMore, loadingMore, loading, loadMore])
 
   // Refetch when sort mode changes
   useEffect(() => {
@@ -93,9 +75,38 @@ export default function LikesPage() {
   }, [user, isLoaded, router])
 
   const handleLike = async (entryId: string) => {
-    if (liking) return
+    if (liking || !currentStudent) return
 
     setLiking(true)
+    
+    // Optimistically update the entry
+    const previousEntries = entries
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) => {
+        if (entry.id === entryId) {
+          // Check if user already voted
+          const hasVoted = entry.votes.some((vote) => vote.studentId === currentStudent.id)
+          if (hasVoted) {
+            return entry // Already voted, don't update
+          }
+          
+          // Optimistically add vote
+          return {
+            ...entry,
+            voteCount: entry.voteCount + 1,
+            votes: [
+              ...entry.votes,
+              {
+                id: `temp-${Date.now()}`,
+                studentId: currentStudent.id,
+              },
+            ],
+          }
+        }
+        return entry
+      })
+    )
+
     try {
       const response = await fetch('/api/votes', {
         method: 'POST',
@@ -108,9 +119,15 @@ export default function LikesPage() {
         throw new Error(error.error || 'Failed to like')
       }
 
-      // Refetch entries to update vote states (only refetch current page to avoid losing scroll position)
-      await refetch()
+      // If sort by likes, we need to re-sort the entries
+      if (sortByLikes) {
+        // Refetch to get properly sorted entries
+        await refetch()
+      }
+      // Otherwise, optimistic update is sufficient
     } catch (err) {
+      // Revert optimistic update on error
+      setEntries(previousEntries)
       console.error('Like error:', err)
       alert(err instanceof Error ? err.message : 'Failed to like. Please try again.')
     } finally {
@@ -210,37 +227,17 @@ export default function LikesPage() {
           </p>
         </div>
       ) : (
-        <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {entriesToLike.map((entry) => (
-              <EntryCard
-                key={entry.id}
-                entry={entry}
-                currentStudentId={currentStudent?.id || ''}
-                onVote={handleLike}
-                showVoteButton={true}
-              />
-            ))}
-          </div>
-
-          {/* Infinite scroll trigger */}
-          {hasMore && (
-            <div ref={observerTarget} className="mt-8 flex justify-center py-8">
-              {loadingMore && (
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>Loading more entries...</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {!hasMore && entriesToLike.length > 0 && (
-            <div className="mt-8 text-center text-gray-500">
-              <p>You&apos;ve seen all entries!</p>
-            </div>
-          )}
-        </>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {entriesToLike.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              entry={entry}
+              currentStudentId={currentStudent?.id || ''}
+              onVote={handleLike}
+              showVoteButton={true}
+            />
+          ))}
+        </div>
       )}
     </div>
   )
