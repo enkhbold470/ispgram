@@ -6,7 +6,7 @@ import { fontVariables } from "@/lib/fonts";
 import { MobileNav } from "@/components/mobile-nav";
 import { siteConfig } from "@/config/siteConfig";
 import "./globals.css";
-
+import {Analytics } from "@vercel/analytics/next";
 // Old school OpenGraph - simple and reliable
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 const ogImageUrl = `${appUrl}/opengraph-image.jpeg`;
@@ -108,6 +108,7 @@ export default function RootLayout({
 
           {/* Mobile Bottom Navigation */}
           <MobileNav />
+<Analytics/>
         </body>
       </html>
     </ClerkProvider>
