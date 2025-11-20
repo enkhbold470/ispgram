@@ -99,8 +99,10 @@ export async function POST(request: Request) {
     console.log('☁️  [BLOB] Starting upload to Vercel Blob...')
     const uploadStartTime = Date.now()
     
+    // Maximize cache control for optimal performance (1 year = 31,536,000 seconds)
     const blob = await put(`education-week/${userId}-${Date.now()}.jpg`, file, {
       access: 'public',
+      cacheControlMaxAge: 31536000, // Cache for 1 year (maximum recommended)
     })
     
     const uploadTime = Date.now() - uploadStartTime
