@@ -54,29 +54,9 @@ export default function Home() {
           })}
         </div>
 
-        {/* Activity Highlights */}
-        <div className="mx-auto mt-12 max-w-2xl rounded-lg border bg-card p-8 shadow-lg">
-          <h2 className="mb-4 flex items-center justify-center gap-2 text-2xl font-bold text-card-foreground">
-            <HighlightsIcon className="h-6 w-6 text-theme-primary" />
-            {activityHighlights.title}
-          </h2>
 
-          <ul className="space-y-3 text-left text-muted-foreground">
-            {activityHighlights.items.map((item, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <span className="text-theme-primary">•</span>
-                <span>
-                  <strong>{item.label}</strong> {item.description}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-
-
-        {/* Showcase Preview */}
-        <div className="mt-16">
+   {/* Showcase Preview */}
+   <div className="mt-16">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold text-primary">{showcase.title}</h2>
             <p className="mt-2 text-muted-foreground">{showcase.subtitle}</p>
@@ -117,6 +97,28 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Activity Highlights */}
+        <div className="mx-auto mt-12 max-w-2xl rounded-lg border bg-card p-8 shadow-lg">
+          <h2 className="mb-4 flex items-center justify-center gap-2 text-2xl font-bold text-card-foreground">
+            <HighlightsIcon className="h-6 w-6 text-theme-primary" />
+            {activityHighlights.title}
+          </h2>
+
+          <ul className="space-y-3 text-left text-muted-foreground">
+            {activityHighlights.items.map((item, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <span className="text-theme-primary">•</span>
+                <span>
+                  <strong>{item.label}</strong> {item.description}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+
+
+     
 
         {/* Features */}
         <div className="mt-12 grid gap-6 sm:grid-cols-3">
