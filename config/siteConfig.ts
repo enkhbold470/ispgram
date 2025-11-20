@@ -16,7 +16,7 @@ export const siteConfig = {
 
   // Hero Section
   hero: {
-    emoji: ['🎓', '📚'],
+    emoji: [''],
     icon: GraduationCap,
     title: 'ISPGram Photo Contest',
     subtitle: 'Share Your Adventures Around the World',
@@ -66,54 +66,38 @@ export const siteConfig = {
     title: 'Contest Details',
     icon: Trophy,
     items: [
-      {
-        label: 'Who can participate:',
-        description: 'De Anza College ISP students',
-      },
-      {
-        label: 'Photo Theme:',
-        description: 'Share pictures from your home country, travels, or the US—show us your adventures!',
-      },
-      {
-        label: 'Deadline:',
-        description: 'Contest closes November 28th (you can update your entry anytime before then)',
-      },
-      {
-        label: 'Scoring:',
-        description: 'Get likes from friends to climb the leaderboard—the more likes, the higher you rank!',
-      },
-      {
-        label: 'Winner Recognition:',
-        description: 'Top entries will be featured in the ISP Office—join the fun and share your story! 🎉',
-      },
+      { label: 'Who:', description: 'De Anza ISP students' },
+      { label: 'Theme:', description: 'Photos from home, travels, or the US' },
+      { label: 'Deadline:', description: 'Nov 28'},
+      { label: 'Scoring:', description: 'More likes = higher rank' },
+      { label: 'Winners:', description: 'Top entries featured in ISP Office and more coming up!' },
     ],
   },
 
-  // Features
   features: [
     {
       icon: Upload,
-      title: 'Easy Photo Upload',
-      description: 'Share your adventures with a photo and caption from anywhere in the world',
+      title: 'Easy Upload',
+      description: 'Share photos and captions from anywhere',
       color: 'text-sky-600' as const,
     },
     {
       icon: Heart,
-      title: 'Like & Support',
-      description: 'Give likes to photos you love and help friends climb the leaderboard',
+      title: 'Like Photos',
+      description: 'Like your favorites and boost friends',
       color: 'text-indigo-600' as const,
     },
     {
       icon: Trophy,
-      title: 'Live Leaderboard',
-      description: 'Track rankings in real-time based on likes—winners featured in ISP Office!',
+      title: 'Leaderboard',
+      description: 'See live rankings—top entries get featured!',
       color: 'text-amber-500' as const,
     },
   ],
 
   // Footer
   footer: {
-    text: 'Presented by the De Anza ISP Office Photo Contest—share your adventures and have fun! Contest closes November 28th. 💙',
+    text: 'De Anza ISP Photo Contest • Ends Nov 28 💙',
   },
 
   // Theme Colors
