@@ -3,9 +3,9 @@ import { GraduationCap, Trophy, Heart, Upload } from "lucide-react";
 export const siteConfig = {
   // Basic Site Info
   name: 'ISPGram',
-  title: 'ISPGram - De Anza ISP Photo Contest',
-  description: 'Share your adventures! Upload pictures from your home country, travels, or the US. Contest closes November 28th. Winners featured in the ISP Office!',
-  shortDescription: 'Share your adventures—upload one photo from anywhere in the world (update anytime until Nov 28th)',
+  title: 'ISPGram Photo Contest',
+  description: 'Upload a photo from anywhere, get likes, and win! Contest ends Nov 28.',
+  shortDescription: 'Upload a photo—update anytime until Nov 28.',
 
   // Navigation
   navigation: [
@@ -20,7 +20,7 @@ export const siteConfig = {
     icon: GraduationCap,
     title: 'ISPGram Photo Contest',
     subtitle: 'Share Your Adventures Around the World',
-    description: 'Join the De Anza ISP Office photo contest! Share a picture from your home country, your travels, or the US. Get likes from friends and climb the leaderboard. Contest closes November 28th—winners will be featured in the ISP Office! 🌟',
+    description: 'Upload a photo from anywhere, get likes, and win! Contest ends Nov 28.',
     ctaButtons: [
       {
         href: '/submit',
