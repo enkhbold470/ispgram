@@ -50,20 +50,45 @@ export function useEntries(options: UseEntriesOptions = {}) {
           params.set('cursor', cursor)
         }
 
-        const response = await fetch(`/api/entries?${params.toString()}`)
+        console.group(`🔍 useEntries: Fetching ${append ? '(append)' : '(initial)'}`)
+        console.log('📥 Request params:', { cursor, limit: initialLimit, sortBy, append })
+
+        // Add cache control to prevent stale data in production
+        const response = await fetch(`/api/entries?${params.toString()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        })
         if (!response.ok) throw new Error('Failed to fetch entries')
         const data = await response.json()
 
+        console.log('📥 Response data:', {
+          entriesCount: data.entries.length,
+          hasMore: data.hasMore,
+          nextCursor: data.nextCursor,
+          top3: data.entries.slice(0, 3).map((e: Entry) => ({ name: e.student.name, votes: e.voteCount }))
+        })
+
         if (append) {
-          setEntries((prev) => [...prev, ...data.entries])
+          setEntries((prev) => {
+            console.log('📝 Appending entries. Previous count:', prev.length)
+            const combined = [...prev, ...data.entries]
+            console.log('📝 Combined entries count:', combined.length)
+            console.log('📝 Combined top 3:', combined.slice(0, 3).map((e: Entry) => ({ name: e.student.name, votes: e.voteCount })))
+            return combined
+          })
         } else {
+          console.log('📝 Setting entries (replace). Count:', data.entries.length)
           setEntries(data.entries)
         }
 
         setNextCursor(data.nextCursor)
         setHasMore(data.hasMore)
         setError(null)
+        console.groupEnd()
       } catch (err) {
+        console.error('❌ useEntries error:', err)
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)

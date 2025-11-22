@@ -1,20 +1,98 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Trophy, RefreshCw, Loader2, AlertCircle } from 'lucide-react'
+import { Trophy, RefreshCw, AlertCircle } from 'lucide-react'
 import { Leaderboard } from '@/components/leaderboard'
 import { useEntries } from '@/hooks/use-entries'
 import { ResultsSkeleton } from '@/components/skeletons/results-skeleton'
 
 export default function ResultsPage() {
-  const { entries, loading, error, refetch } = useEntries()
+  // Fetch ALL entries sorted by votes for accurate leaderboard
+  const { entries, loading, error, refetch, hasMore } = useEntries({
+    sortBy: 'votes',
+    initialLimit: 1000, // Fetch a large number to get all entries
+  })
   const [refreshing, setRefreshing] = useState(false)
+
+  // Sort entries by votes (API should already sort, but ensure client-side sort is correct)
+  const sortedEntries = [...entries].sort((a, b) => {
+    const diff = b.voteCount - a.voteCount
+    // If votes are equal, use createdAt as tiebreaker (newer first)
+    if (diff === 0) {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    }
+    return diff
+  })
+  
+  const topThree = sortedEntries.slice(0, 3)
+
+  // Debug logging - ALL useEffect hooks must be before early returns
+  useEffect(() => {
+    if (entries.length > 0) {
+      console.group('🔍 RESULTS PAGE DEBUG')
+      console.log('📊 Total entries fetched:', entries.length)
+      console.log('📋 All entries with vote counts:', entries.map(e => ({
+        id: e.id,
+        name: e.student.name,
+        voteCount: e.voteCount,
+        createdAt: e.createdAt
+      })))
+      
+      const sortedByVotes = [...entries].sort((a, b) => b.voteCount - a.voteCount)
+      console.log('🏆 Top 10 by votes:', sortedByVotes.slice(0, 10).map((e, idx) => ({
+        rank: idx + 1,
+        id: e.id,
+        name: e.student.name,
+        voteCount: e.voteCount
+      })))
+      
+      const topThreeDebug = sortedByVotes.slice(0, 3)
+      console.log('🥇 Top 3 entries:', topThreeDebug.map((e, idx) => ({
+        rank: idx + 1,
+        id: e.id,
+        name: e.student.name,
+        voteCount: e.voteCount
+      })))
+      
+      // Check for entries with high votes that might be missing
+      const highVoteEntries = entries.filter(e => e.voteCount > 0)
+      console.log('📈 Entries with votes:', highVoteEntries.length)
+      console.log('📊 Vote distribution:', {
+        total: entries.length,
+        withVotes: highVoteEntries.length,
+        zeroVotes: entries.filter(e => e.voteCount === 0).length,
+        maxVotes: Math.max(...entries.map(e => e.voteCount), 0),
+        minVotes: Math.min(...entries.map(e => e.voteCount), 0),
+      })
+      
+      console.log('🔄 Has more entries to load:', hasMore)
+      console.groupEnd()
+    }
+  }, [entries, hasMore])
+
+  // Debug: Log what we're displaying
+  useEffect(() => {
+    if (topThree.length > 0) {
+      console.group('🎯 DISPLAYING TOP 3')
+      topThree.forEach((entry, idx) => {
+        console.log(`Rank ${idx + 1}:`, {
+          name: entry.student.name,
+          votes: entry.voteCount,
+          id: entry.id,
+          createdAt: entry.createdAt
+        })
+      })
+      console.groupEnd()
+    }
+  }, [topThree])
 
   const handleRefresh = async () => {
     setRefreshing(true)
+    console.log('🔄 Refreshing entries...')
     await refetch()
     setRefreshing(false)
+    console.log('✅ Refresh complete')
   }
 
   if (loading) {
@@ -34,10 +112,6 @@ export default function ResultsPage() {
       </div>
     )
   }
-
-  const topThree = [...entries]
-    .sort((a, b) => b.voteCount - a.voteCount)
-    .slice(0, 3)
 
   // Arrange for olympic order: [3rd, 1st, 2nd]
   const displayTopThree =
