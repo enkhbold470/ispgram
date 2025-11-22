@@ -73,7 +73,7 @@ export function Leaderboard({ entries }: LeaderboardProps) {
               )}
             </div>
 
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+            {/* <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
               <Image
                 src={entry.photoUrl || 'https://placekeanu.com/500'}
                 alt={`${entry.student.name}'s Education Week highlight`}
@@ -81,7 +81,7 @@ export function Leaderboard({ entries }: LeaderboardProps) {
                 className="object-cover"
                 sizes="64px"
               />
-            </div>
+            </div> */}
 
             <div className="flex flex-col items-end">
               <span className="text-2xl font-bold text-gray-900">
