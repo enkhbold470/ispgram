@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { put } from '@vercel/blob'
 import { NextResponse } from 'next/server'
 import { checkNSFW } from '@/lib/nsfw-filter-improved'
+import sharp from 'sharp'
 
 export async function POST(request: Request) {
   console.log('📤 [UPLOAD] Upload request initiated')
@@ -95,12 +96,66 @@ export async function POST(request: Request) {
       )
     }
 
+    // Compress and optimize image using Sharp
+    console.log('🖼️  [COMPRESS] Starting image compression...')
+    const compressStartTime = Date.now()
+    let optimizedBuffer: Buffer
+    let finalFile: File
+    
+    try {
+      // Optimize image: resize if too large, compress JPEG quality, convert to JPEG
+      optimizedBuffer = await sharp(buffer)
+        .resize(1920, 1920, {
+          fit: 'inside',
+          withoutEnlargement: true, // Don't enlarge smaller images
+        })
+        .jpeg({
+          quality: 85, // Good balance between quality and file size
+          progressive: true, // Progressive JPEG for better loading
+          mozjpeg: true, // Use mozjpeg for better compression
+        })
+        .toBuffer()
+      
+      const compressionTime = Date.now() - compressStartTime
+      const originalSize = buffer.length
+      const compressedSize = optimizedBuffer.length
+      const reduction = ((1 - compressedSize / originalSize) * 100).toFixed(1)
+      
+      console.log('✅ [COMPRESS] Compression complete:', {
+        time: `${compressionTime}ms`,
+        original: `${(originalSize / 1024 / 1024).toFixed(2)} MB`,
+        compressed: `${(compressedSize / 1024 / 1024).toFixed(2)} MB`,
+        reduction: `${reduction}%`,
+      })
+      // Convert optimizedBuffer (Buffer<ArrayBufferLike>) to a plain ArrayBuffer
+function toPlainArrayBuffer(buffer: Buffer): ArrayBuffer {
+  const ab = new ArrayBuffer(buffer.byteLength);
+  const view = new Uint8Array(ab);
+  view.set(buffer);
+  return ab;
+}
+
+// Create a new File object from the compressed buffer after conversion
+const plainArrayBuffer = toPlainArrayBuffer(optimizedBuffer);
+
+      // Create a new File object from the compressed buffer
+      finalFile = new File([plainArrayBuffer], file.name.replace(/\.[^/.]+$/, '.jpg'), {
+        type: 'image/jpeg',
+        lastModified: Date.now(),
+      })
+    } catch (compressError) {
+      console.warn('⚠️  [COMPRESS] Compression failed, using original:', compressError)
+      // Fallback to original file if compression fails
+      optimizedBuffer = buffer
+      finalFile = file
+    }
+
     // Upload to Vercel Blob if image is safe
     console.log('☁️  [BLOB] Starting upload to Vercel Blob...')
     const uploadStartTime = Date.now()
     
     // Maximize cache control for optimal performance (1 year = 31,536,000 seconds)
-    const blob = await put(`education-week/${userId}-${Date.now()}.jpg`, file, {
+    const blob = await put(`education-week/${userId}-${Date.now()}.jpg`, finalFile, {
       access: 'public',
       cacheControlMaxAge: 31536000, // Cache for 1 year (maximum recommended)
     })

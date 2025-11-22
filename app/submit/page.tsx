@@ -11,9 +11,18 @@ import Link from 'next/link'
 import { Upload, Loader2, CheckCircle, AlertCircle, Trash2, Heart, Eye } from 'lucide-react'
 import Image from 'next/image'
 import { SubmitSkeleton } from '@/components/skeletons/submit-skeleton'
+import imageCompression from 'browser-image-compression'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
 const MAX_FILE_SIZE_MB = 5
+
+// Compression options for client-side image compression
+const compressionOptions = {
+  maxSizeMB: 1, // Compress to max 1MB (reduced from 5MB)
+  maxWidthOrHeight: 1920, // Max width or height
+  useWebWorker: true, // Use web worker for better performance
+  fileType: 'image/jpeg', // Convert all images to JPEG for better compression
+}
 
 export default function SubmitPage() {
   const { user, isLoaded } = useUser()
@@ -28,6 +37,7 @@ export default function SubmitPage() {
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [compressing, setCompressing] = useState(false)
   const [checkingEntry, setCheckingEntry] = useState(true)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -473,7 +483,7 @@ export default function SubmitPage() {
                 <Input
                   type="file"
                   accept=".jpeg,.jpg,.png,image/jpeg,image/jpg,image/png"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const selectedFile = e.target.files?.[0]
                     if (selectedFile) {
                       if (!ACCEPTED_IMAGE_TYPES.includes(selectedFile.type)) {
@@ -488,21 +498,51 @@ export default function SubmitPage() {
                         setPreviewUrl(null)
                         return
                       }
+                      
                       setError(null)
-                      setFile(selectedFile)
-                      const url = URL.createObjectURL(selectedFile)
-                      setPreviewUrl(url)
+                      setCompressing(true)
+                      
+                      try {
+                        // Compress image before setting it
+                        const compressedFile = await imageCompression(selectedFile, compressionOptions)
+                        console.log('Image compressed:', {
+                          original: `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`,
+                          compressed: `${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`,
+                          reduction: `${((1 - compressedFile.size / selectedFile.size) * 100).toFixed(1)}%`,
+                        })
+                        
+                        setFile(compressedFile)
+                        const url = URL.createObjectURL(compressedFile)
+                        setPreviewUrl(url)
+                      } catch (compressionError) {
+                        console.error('Compression error:', compressionError)
+                        // Fallback to original file if compression fails
+                        setFile(selectedFile)
+                        const url = URL.createObjectURL(selectedFile)
+                        setPreviewUrl(url)
+                        setError('Image compression failed. Using original image.')
+                      } finally {
+                        setCompressing(false)
+                      }
                     }
                   }}
                   className="hidden"
                   id="file-upload"
                   required={!existingEntry}
+                  disabled={compressing}
                 />
                 <label
                   htmlFor="file-upload"
-                  className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 transition-colors hover:bg-gray-100"
+                  className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 transition-colors hover:bg-gray-100 ${compressing ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  {previewUrl ? (
+                  {compressing ? (
+                    <>
+                      <Loader2 className="mb-2 h-12 w-12 text-gray-400 animate-spin" />
+                      <span className="font-medium text-gray-700">
+                        Compressing image...
+                      </span>
+                    </>
+                  ) : previewUrl ? (
                     <div className="relative h-64 w-full overflow-hidden rounded-lg">
                       <Image
                         src={previewUrl}
@@ -525,7 +565,7 @@ export default function SubmitPage() {
                         Only .jpeg, .png, .jpg files are allowed.<br />
                         Sorry, <b>.heic</b> format is NOT supported.<br />
                         If you are using an iPhone, please change your camera settings to save as JPEG instead of HEIC.<br />
-                        Max image size: 5MB.
+                        Max image size: 5MB. Images will be automatically compressed.
                       </span>
                     </>
                   )}
