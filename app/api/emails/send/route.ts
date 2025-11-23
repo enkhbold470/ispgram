@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer'
 import { prisma } from '@/lib/prisma'
 import { getStudentsForDailyNotification } from '@/lib/db'
 import { isAdminEmail } from '@/lib/admin'
+import { analyzeImage, generatePersonalizedEmail } from '@/lib/email-personalization'
 import crypto from 'crypto'
 
 // Generate unsubscribe token
@@ -96,37 +97,56 @@ export async function POST(request: Request) {
             continue
           }
 
-          let emailBody = ''
-          
-          if (student.hasEntry && student.voteCount > 0) {
-            const entryUrl = `${appUrl}/post/${student.entryId}`
-            emailBody = `You got ${student.voteCount} ${student.voteCount === 1 ? 'like' : 'likes'}! Check it out: ${entryUrl}\n\nShare your entry with friends to get more likes!`
-          } else if (student.hasEntry) {
-            const entryUrl = `${appUrl}/post/${student.entryId}`
-            emailBody = `Your entry is live! Share it with friends to get likes: ${entryUrl}\n\nCheck out other entries and vote: ${appUrl}/vote`
-          } else {
-            emailBody = `Ready to share your adventure? Submit your photo: ${appUrl}/submit\n\nSee what others shared: ${appUrl}/vote`
+          // Fetch entry with photoUrl if student has an entry
+          let imageUrl: string | null = null
+          let imageAnalysis: Awaited<ReturnType<typeof analyzeImage>> | null = null
+
+          if (student.hasEntry && student.entryId) {
+            const entry = await prisma.entry.findUnique({
+              where: { id: student.entryId },
+              select: { photoUrl: true },
+            })
+            
+            if (entry?.photoUrl) {
+              imageUrl = entry.photoUrl
+              console.log(`Analyzing image for ${student.email}...`)
+              try {
+                imageAnalysis = await analyzeImage(imageUrl)
+                console.log(`Image analysis complete for ${student.email}`)
+              } catch (analysisError) {
+                console.error(`Failed to analyze image for ${student.email}:`, analysisError)
+                // Continue without analysis - will use template email
+              }
+            }
           }
+
+          // Generate personalized email content
+          const emailContent = await generatePersonalizedEmail(
+            student.name,
+            imageUrl,
+            imageAnalysis,
+            student.voteCount,
+            student.entryId,
+            appUrl
+          )
 
           const unsubscribeLink = generateUnsubscribeLink(student.email)
 
           await transporter.sendMail({
             from: `"ISPgram Team" <${fromEmail}>`,
             to: student.email,
-            subject: 'Your Daily ISPgram Update',
+            subject: emailContent.subject,
             html: `
-              Hello ${student.name},<br><br>
-              ${emailBody.replace(/\n/g, '<br>')}<br><br>
-              Best regards,<br>
-              ISPgram Team<br><br>
+              ${emailContent.htmlBody}
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
-              <p style="font-size: 12px; color: #6b7280;">
+              <p style="font-size: 12px; color: #6b7280; text-align: center;">
                 <a href="${unsubscribeLink}" style="color: #6b7280; text-decoration: underline;">Unsubscribe from email notifications</a>
               </p>
             `,
           })
           
           sent++
+          console.log(`✅ Personalized email sent to ${student.email}`)
         } catch (error) {
           console.error(`Failed to send daily notification to ${student.email}:`, error)
           failed++
