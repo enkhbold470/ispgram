@@ -10,14 +10,25 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Mail, Send, Users, Heart, CheckSquare, Square, Bell, MailCheck } from 'lucide-react'
+import { Mail, Send, Users, Heart, CheckSquare, Square, Bell, MailCheck, Terminal, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Badge } from '@/components/ui/badge'
 interface Student {
   email: string
   name: string
   hasEntry: boolean
   voteCount?: number
+}
+
+interface LogEntry {
+  id: string
+  timestamp: string
+  level: 'log' | 'info' | 'warn' | 'error' | 'debug'
+  message: string
+  context?: string
+  data?: unknown
 }
 
 export default function AdminPage() {
@@ -33,6 +44,10 @@ export default function AdminPage() {
   const [sendingDaily, setSendingDaily] = useState(false)
   const [subject, setSubject] = useState('Update from ISPgram')
   const [body, setBody] = useState('Hello! This is an update from ISPgram.')
+  const [logs, setLogs] = useState<LogEntry[]>([])
+  const [logsOpen, setLogsOpen] = useState(false)
+  const [logsLoading, setLogsLoading] = useState(false)
+  const [autoRefresh, setAutoRefresh] = useState(true)
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -161,11 +176,52 @@ export default function AdminPage() {
     }
   }
 
+  const fetchLogs = useCallback(async () => {
+    setLogsLoading(true)
+    try {
+      const response = await fetch('/api/logs')
+      const data = await response.json()
+      if (response.ok) {
+        setLogs(data.logs || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch logs:', error)
+    } finally {
+      setLogsLoading(false)
+    }
+  }, [])
+
+  const clearLogs = async () => {
+    try {
+      const response = await fetch('/api/logs', { method: 'DELETE' })
+      if (response.ok) {
+        setLogs([])
+        toast.success('Logs cleared')
+      }
+    } catch (error) {
+      toast.error('Failed to clear logs')
+    }
+  }
+
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       fetchEmailList()
+      if (logsOpen) {
+        fetchLogs()
+      }
     }
-  }, [fetchEmailList, isLoaded, isSignedIn])
+  }, [fetchEmailList, isLoaded, isSignedIn, logsOpen])
+
+  // Auto-refresh logs when open
+  useEffect(() => {
+    if (!logsOpen || !autoRefresh) return
+
+    const interval = setInterval(() => {
+      fetchLogs()
+    }, 2000) // Refresh every 2 seconds
+
+    return () => clearInterval(interval)
+  }, [logsOpen, autoRefresh, fetchLogs])
 
   const allSelected = students.length > 0 && selectedEmails.size === students.length
 
@@ -193,12 +249,145 @@ export default function AdminPage() {
     )
   }
 
+  const getLogLevelColor = (level: LogEntry['level']) => {
+    switch (level) {
+      case 'error':
+        return 'bg-red-100 text-red-800 border-red-200'
+      case 'warn':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'info':
+        return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'debug':
+        return 'bg-gray-100 text-gray-800 border-gray-200'
+      default:
+        return 'bg-green-100 text-green-800 border-green-200'
+    }
+  }
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp)
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold">Email Management</h1>
         <p className="text-gray-600">Select users and send emails</p>
       </div>
+
+      {/* Debug Logs Drawer */}
+      <Collapsible open={logsOpen} onOpenChange={setLogsOpen}>
+        <Card>
+          <CollapsibleTrigger className="w-full">
+            <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Terminal className="h-5 w-5 text-theme-primary" />
+                  <CardTitle>Debug Logs</CardTitle>
+                  <Badge variant="outline">{logs.length} entries</Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                  {logsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </div>
+              </div>
+              <CardDescription>
+                View all console logs, email processes, and system events
+              </CardDescription>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={autoRefresh}
+                    onCheckedChange={setAutoRefresh}
+                    id="auto-refresh"
+                  />
+                  <Label htmlFor="auto-refresh" className="cursor-pointer">
+                    Auto-refresh (2s)
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchLogs}
+                    disabled={logsLoading}
+                  >
+                    Refresh
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearLogs}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Clear
+                  </Button>
+                </div>
+              </div>
+              <div className="border rounded-lg bg-gray-50 max-h-[600px] overflow-y-auto">
+                {logsLoading && logs.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">Loading logs...</div>
+                ) : logs.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">No logs available</div>
+                ) : (
+                  <div className="divide-y">
+                    {logs.map((log) => (
+                      <div
+                        key={log.id}
+                        className="p-3 hover:bg-white transition-colors"
+                      >
+                        <div className="flex items-start gap-3">
+                          <Badge
+                            variant="outline"
+                            className={`${getLogLevelColor(log.level)} text-xs shrink-0`}
+                          >
+                            {log.level.toUpperCase()}
+                          </Badge>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs text-gray-500 font-mono">
+                                {formatTimestamp(log.timestamp)}
+                              </span>
+                              {log.context && (
+                                <Badge variant="outline" className="text-xs">
+                                  {log.context}
+                                </Badge>
+                              )}
+                            </div>
+                            <pre className="text-sm whitespace-pre-wrap break-words font-mono">
+                              {log.message}
+                            </pre>
+                            {log.data && (
+                              <details className="mt-2">
+                                <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700">
+                                  View data
+                                </summary>
+                                <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-x-auto">
+                                  {JSON.stringify(log.data, null, 2)}
+                                </pre>
+                              </details>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {/* Daily Notification Button */}
       <Card>
