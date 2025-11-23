@@ -367,7 +367,7 @@ export default function AdminPage() {
                             <pre className="text-sm whitespace-pre-wrap break-words font-mono">
                               {log.message}
                             </pre>
-                            {log.data && (
+                            {log.data !== undefined && log.data !== null && (
                               <details className="mt-2">
                                 <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700">
                                   View data
