@@ -43,14 +43,6 @@ export const siteConfig = {
     subtitle: 'Preview what\'s happening in the contest',
     items: [
       {
-        image: 'https://raw.githubusercontent.com/enkhbold470/ispgram/refs/heads/main/public/iphone14promax-portrait.png',
-        title: 'Share Your Adventures',
-        description: 'Upload your favorite photos from your travels and watch them come alive in the gallery',
-        icon: Upload,
-        color: 'from-theme-primary-light to-theme-secondary-light',
-        iconColor: 'text-theme-primary',
-      },
-      {
         image: 'https://raw.githubusercontent.com/enkhbold470/ispgram/refs/heads/main/public/iphone14promax-results.png',
         title: 'Climb the Leaderboard',
         description: 'See real-time rankings and watch entries compete for top spots with likes',
