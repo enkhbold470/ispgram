@@ -244,7 +244,7 @@ export default function PostPage() {
             </div>
           )}
 
-          {/* Vote Section */}
+          {/* Vote Section - Contest ended, showing static count only */}
           <div className="flex items-center justify-between border-t pt-6">
             <div className="flex items-center gap-3">
               <Heart
@@ -262,7 +262,8 @@ export default function PostPage() {
                 {entry.voteCount === 1 ? 'like' : 'likes'}
               </span>
             </div>
-            {userLoaded && (
+            {/* Contest ended - like button disabled */}
+            {/* {userLoaded && (
               <div>
                 {isSignedIn ? (
                   <button
@@ -289,7 +290,7 @@ export default function PostPage() {
                   </SignInButton>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
