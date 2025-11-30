@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { VoteButton } from './vote-button'
+// import { VoteButton } from './vote-button' // Contest ended - voting disabled
 import { cn } from '@/lib/utils'
 
 interface EntryCardProps {
@@ -20,21 +20,21 @@ interface EntryCardProps {
     voteCount: number
   }
   currentStudentId?: string
-  onVote: (entryId: string) => Promise<void>
-  showVoteButton?: boolean
+  onVote?: (entryId: string) => Promise<void> // Made optional since voting is disabled
+  showVoteButton?: boolean // Kept for API compatibility but no longer used
   rank?: number
 }
 
 export function EntryCard({
   entry,
-  currentStudentId,
-  onVote,
-  showVoteButton = true,
+  // currentStudentId, // Contest ended - voting disabled
+  // onVote, // Contest ended - voting disabled
+  // showVoteButton = true, // Contest ended - voting disabled
   rank,
 }: EntryCardProps) {
-  const hasVoted = currentStudentId
-    ? entry.votes.some((vote) => vote.studentId === currentStudentId)
-    : false
+  // const hasVoted = currentStudentId
+  //   ? entry.votes.some((vote) => vote.studentId === currentStudentId)
+  //   : false // Contest ended - voting disabled
 
   const getRankEmoji = (rank: number) => {
     switch (rank) {
@@ -92,7 +92,8 @@ export function EntryCard({
           </div>
         </Link>
 
-        {showVoteButton && (
+        {/* Contest ended - vote button disabled */}
+        {/* {showVoteButton && (
           <div className="mt-3 flex justify-center" onClick={(e) => e.stopPropagation()}>
             <VoteButton
               entryId={entry.id}
@@ -101,14 +102,20 @@ export function EntryCard({
               onVote={onVote}
             />
           </div>
-        )}
+        )} */}
 
-        {!showVoteButton && (
+        {/* Always show vote count (contest ended - voting disabled) */}
+        <div className="mt-3 flex items-center justify-center gap-2 text-gray-600">
+          <span className="font-semibold">{entry.voteCount}</span>
+          <span className="text-sm">votes</span>
+        </div>
+
+        {/* {!showVoteButton && (
           <div className="mt-3 flex items-center justify-center gap-2 text-gray-600">
             <span className="font-semibold">{entry.voteCount}</span>
             <span className="text-sm">votes</span>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )

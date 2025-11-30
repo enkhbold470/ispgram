@@ -183,15 +183,14 @@ export default function LikesPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">Cheer on Your Favorites</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Photo Gallery</h1>
         <p className="text-gray-600">
-          Tap the heart to celebrate your peers! Send hearts (likes) to as many entries as you like.
+          The contest has ended! Browse all the amazing Education Week moments shared by participants.
         </p>
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-theme-primary-light px-4 py-2 text-sm font-medium text-gray-900">
           <Heart className="h-4 w-4" />
           <span>
-            {sortedEntries.length} {sortedEntries.length === 1 ? 'entry' : 'entries'} in
-            the activity
+            {sortedEntries.length} {sortedEntries.length === 1 ? 'entry' : 'entries'} submitted
           </span>
         </div>
 
@@ -223,7 +222,7 @@ export default function LikesPage() {
       {entriesToLike.length === 0 ? (
         <div className="rounded-lg border bg-white p-8 text-center shadow-lg">
           <p className="text-gray-600">
-            You&apos;re the only entry so far! Invite your friends to share their Education Week highlights.
+            No entries were submitted during this contest.
           </p>
         </div>
       ) : (
@@ -234,7 +233,7 @@ export default function LikesPage() {
               entry={entry}
               currentStudentId={currentStudent?.id || ''}
               onVote={handleLike}
-              showVoteButton={true}
+              showVoteButton={false}
             />
           ))}
         </div>

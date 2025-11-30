@@ -4,13 +4,14 @@ export const siteConfig = {
   // Basic Site Info
   name: 'ISPGram',
   title: 'ISPGram Photo Contest',
-  description: 'Upload a photo from anywhere, get likes, and win! Contest ends Nov 28.',
-  shortDescription: 'Upload a photo—update anytime until Nov 28.',
+  description: 'The contest has ended! Browse the gallery and see the final results.',
+  shortDescription: 'Contest ended Nov 28. View the gallery and results!',
 
   // Navigation
+  // Contest ended - removed submit/My Post tab
   navigation: [
-    { href: '/submit', label: 'My Post' },
-    { href: '/vote', label: 'Vote' },
+    // { href: '/submit', label: 'My Post' }, // Contest ended - upload disabled
+    { href: '/vote', label: 'Gallery' },
     { href: '/results', label: 'Results' },
   ],
 
@@ -19,19 +20,26 @@ export const siteConfig = {
     emoji: [''],
     icon: GraduationCap,
     title: 'ISPGram Photo Contest',
-    subtitle: 'Share Your Adventures Around the World',
-    description: 'Upload a photo from anywhere, get likes, and win! Contest ends Nov 28.',
+    subtitle: 'Contest Has Ended!',
+    description: 'Thank you for participating! Browse the gallery and see the final results below.',
     ctaButtons: [
+      // Contest ended - upload button disabled
+      // {
+      //   href: '/submit',
+      //   label: 'Upload Your Photo',
+      //   icon: Upload,
+      //   variant: 'primary' as const,
+      // },
       {
-        href: '/submit',
-        label: 'Upload Your Photo',
-        icon: Upload,
+        href: '/vote',
+        label: 'View Gallery',
+        icon: Heart,
         variant: 'primary' as const,
       },
       {
-        href: '/vote',
-        label: 'Like Friends\' Photos',
-        icon: Heart,
+        href: '/results',
+        label: 'See Results',
+        icon: Trophy,
         variant: 'secondary' as const,
       },
     ],
@@ -60,36 +68,37 @@ export const siteConfig = {
     items: [
       { label: 'Who:', description: 'De Anza ISP students' },
       { label: 'Theme:', description: 'Photos from home, travels, or the US' },
-      { label: 'Deadline:', description: 'Nov 28'},
+      { label: 'Status:', description: 'Contest ended Nov 28, 2025'},
       { label: 'Scoring:', description: 'More likes = higher rank' },
       { label: 'Winners:', description: 'Top entries featured in ISP Office and more coming up!' },
     ],
   },
 
   features: [
+    // Contest ended - upload feature info updated
     {
       icon: Upload,
-      title: 'Easy Upload',
-      description: 'Share photos and captions from anywhere',
+      title: 'Contest Ended',
+      description: 'Submissions closed on Nov 28, 2025',
       color: 'text-sky-600' as const,
     },
     {
       icon: Heart,
-      title: 'Like Photos',
-      description: 'Like your favorites and boost friends',
+      title: 'Photo Gallery',
+      description: 'Browse all submitted photos',
       color: 'text-indigo-600' as const,
     },
     {
       icon: Trophy,
-      title: 'Leaderboard',
-      description: 'See live rankings—top entries get featured!',
+      title: 'Final Results',
+      description: 'See the winners and rankings!',
       color: 'text-amber-500' as const,
     },
   ],
 
   // Footer
   footer: {
-    text: 'De Anza ISP Photo Contest • Ends Nov 28 💙',
+    text: 'De Anza ISP Photo Contest • Ended Nov 28, 2025 💙',
   },
 
   // Theme Colors
