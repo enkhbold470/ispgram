@@ -3,9 +3,17 @@ import '@/lib/logger-init'
 
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization to avoid build-time errors
+let openaiInstance: OpenAI | null = null
+
+function getOpenAI(): OpenAI {
+  if (!openaiInstance) {
+    openaiInstance = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  }
+  return openaiInstance
+}
 
 interface ImageAnalysisResult {
   analysis: string
@@ -24,6 +32,7 @@ interface PersonalizedEmailContent {
  */
 export async function analyzeImage(imageUrl: string): Promise<ImageAnalysisResult> {
   try {
+    const openai = getOpenAI()
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
@@ -96,6 +105,7 @@ export async function generatePersonalizedEmail(
   // If we have image analysis, use GPT to generate personalized content
   if (imageAnalysis && imageUrl) {
     try {
+      const openai = getOpenAI()
       const response = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [

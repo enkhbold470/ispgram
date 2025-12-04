@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Mail, Send, Users, Heart, CheckSquare, Square, Bell, MailCheck, Terminal, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
+import { Mail, Send, Users, Heart, CheckSquare, Square, Bell, MailCheck, Terminal, ChevronDown, ChevronUp, Trash2, Download, Database, Image } from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
@@ -48,6 +48,8 @@ export default function AdminPage() {
   const [logsOpen, setLogsOpen] = useState(false)
   const [logsLoading, setLogsLoading] = useState(false)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [backingUpCsv, setBackingUpCsv] = useState(false)
+  const [backingUpImages, setBackingUpImages] = useState(false)
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -203,6 +205,56 @@ export default function AdminPage() {
     }
   }
 
+  const downloadCsvBackup = async () => {
+    setBackingUpCsv(true)
+    try {
+      const response = await fetch('/api/backup/csv')
+      if (!response.ok) {
+        throw new Error('Failed to generate CSV backup')
+      }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `ispgram-backup-${new Date().toISOString().slice(0, 10)}.csv`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      toast.success('CSV backup downloaded successfully')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to download CSV backup')
+    } finally {
+      setBackingUpCsv(false)
+    }
+  }
+
+  const downloadImagesBackup = async () => {
+    setBackingUpImages(true)
+    try {
+      const response = await fetch('/api/backup/images')
+      if (!response.ok) {
+        throw new Error('Failed to generate images backup')
+      }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `ispgram-images-backup-${new Date().toISOString().slice(0, 10)}.zip`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      toast.success('Images backup downloaded successfully')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to download images backup')
+    } finally {
+      setBackingUpImages(false)
+    }
+  }
+
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       fetchEmailList()
@@ -281,6 +333,59 @@ export default function AdminPage() {
         <h1 className="text-3xl font-bold">Email Management</h1>
         <p className="text-gray-600">Select users and send emails</p>
       </div>
+
+      {/* Backup Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Data Backup</CardTitle>
+          <CardDescription>Download complete backups of your data and images</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Button
+              onClick={downloadCsvBackup}
+              disabled={backingUpCsv}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              {backingUpCsv ? (
+                <>
+                  <Database className="h-4 w-4 mr-2 animate-spin" />
+                  Generating CSV...
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4 mr-2" />
+                  Download CSV Backup
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={downloadImagesBackup}
+              disabled={backingUpImages}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              {backingUpImages ? (
+                <>
+                  <Image className="h-4 w-4 mr-2 animate-spin" />
+                  Downloading Images...
+                </>
+              ) : (
+                <>
+                  <Image className="h-4 w-4 mr-2" />
+                  Download Images Backup
+                </>
+              )}
+            </Button>
+          </div>
+          <p className="text-sm text-gray-500 mt-4">
+            CSV backup includes all students, entries, and votes. Images backup downloads all photos from Vercel Blob as a ZIP file.
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Debug Logs Drawer */}
       <Collapsible open={logsOpen} onOpenChange={setLogsOpen}>
@@ -364,7 +469,7 @@ export default function AdminPage() {
                                 </Badge>
                               )}
                             </div>
-                            <pre className="text-sm whitespace-pre-wrap break-words font-mono">
+                            <pre className="text-sm whitespace-pre-wrap wrap-break-word font-mono">
                               {log.message}
                             </pre>
                             {log.data !== undefined && log.data !== null && (
